@@ -67,7 +67,7 @@ public class TruvideoSdkVideoPlugin extends Plugin {
             @Override
             public void onComplete(TruvideoSdkVideoRequest truvideoSdkVideoRequest) {
                 JSObject ret = new JSObject();
-                ret.put("result",new Gson().toJson(truvideoSdkVideoRequest));
+                ret.put("result",truvideoSdkVideoRequest.toJson());
                 call.resolve(ret);
             }
             @Override
@@ -118,7 +118,7 @@ public class TruvideoSdkVideoPlugin extends Plugin {
             @Override
             public void onComplete(TruvideoSdkVideoRequest truvideoSdkVideoRequest) {
                 JSObject ret = new JSObject();
-                ret.put("result",new Gson().toJson(truvideoSdkVideoRequest));
+                ret.put("result",truvideoSdkVideoRequest.toJson());
                 call.resolve(ret);
             }
             @Override
@@ -186,7 +186,7 @@ public class TruvideoSdkVideoPlugin extends Plugin {
             @Override
             public void onComplete(TruvideoSdkVideoRequest truvideoSdkVideoRequest) {
                 JSObject ret = new JSObject();
-                ret.put("result",new Gson().toJson(truvideoSdkVideoRequest));
+                ret.put("result",truvideoSdkVideoRequest.toJson());
                 call.resolve(ret);
             }
             @Override
@@ -203,7 +203,7 @@ public class TruvideoSdkVideoPlugin extends Plugin {
             @Override
             public void onComplete(TruvideoSdkVideoInformation truvideoSdkVideoInformation) {
                 JSObject ret = new JSObject();
-                ret.put("result",new Gson().toJson(truvideoSdkVideoInformation));
+                ret.put("result",truvideoSdkVideoInformation.toJson());
                 call.resolve(ret);
             }
 
