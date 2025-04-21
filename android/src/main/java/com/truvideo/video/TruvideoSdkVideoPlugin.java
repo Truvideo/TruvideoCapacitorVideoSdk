@@ -219,7 +219,7 @@ public class TruvideoSdkVideoPlugin extends Plugin {
     public void generateThumbnail(PluginCall call) {
         String videoPath = call.getString("videoPath");
         String resultPath = call.getString("resultPath");
-        Long position = call.getLong("position");
+        Long position = call.getInt("position");
         int width = call.getInt("width");
         int height = call.getInt("height");
         Boolean precise = call.getBoolean("precise");
@@ -263,7 +263,7 @@ public class TruvideoSdkVideoPlugin extends Plugin {
         String path = call.getString("path");
         String basePath  = getContext().getFilesDir().getPath();
         JSObject ret = new JSObject();
-        ret.put("filePath",new File(basePath+"/camera/"+path).getPath());
+        ret.put("resultPath",new File(basePath+"/camera/"+path).getPath());
         call.resolve(ret);
     }
     public static PluginCall mainCall;
