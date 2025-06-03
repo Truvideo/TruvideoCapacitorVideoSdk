@@ -5,43 +5,62 @@ export interface TruvideoSdkVideoPlugin {
         value: string;
     }>;
     concatVideos(options: {
-        value: string;
+        videoUris: string;
+        resultPath: string;
     }): Promise<{
-        value: string;
+        result: object;
     }>;
     encodeVideo(options: {
-        value: string;
+        videoUri: string;
+        resultPath: string;
+        config: string;
     }): Promise<{
-        value: string;
+        result: object;
     }>;
     getVideoInfo(options: {
-        value: string;
+        videoPath: string;
     }): Promise<{
-        value: string;
+        result: object;
     }>;
     compareVideos(options: {
-        value: string;
+        videoUris: string;
     }): Promise<{
-        value: string;
+        result: object;
     }>;
     mergeVideos(options: {
-        value: string;
+        videoUris: string;
+        resultPath: string;
+        config: string;
     }): Promise<{
-        value: string;
+        result: object;
     }>;
     cleanNoise(options: {
-        value: string;
+        videoPath: string;
+        resultPath: string;
     }): Promise<{
-        value: string;
+        result: object;
     }>;
     editVideo(options: {
-        value: string;
+        videoPath: string;
+        resultPath: string;
+        config: string;
     }): Promise<{
-        value: string;
+        result: object;
     }>;
     generateThumbnail(options: {
-        value: string;
+        videoPath: string;
+        resultPath: string;
+        config: string;
+        position: number;
+        width: number;
+        height: number;
+        precise: boolean;
     }): Promise<{
-        value: string;
+        result: object;
+    }>;
+    getResultPath(options: {
+        path: string;
+    }): Promise<{
+        resultPath: string;
     }>;
 }
