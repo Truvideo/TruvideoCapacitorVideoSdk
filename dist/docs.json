@@ -23,15 +23,15 @@
       },
       {
         "name": "concatVideos",
-        "signature": "(options: { value: string; }) => Promise<{ value: string; }>",
+        "signature": "(options: { videoUris: string; resultPath: string; }) => Promise<{ result: object; }>",
         "parameters": [
           {
             "name": "options",
             "docs": "",
-            "type": "{ value: string; }"
+            "type": "{ videoUris: string; resultPath: string; }"
           }
         ],
-        "returns": "Promise<{ value: string; }>",
+        "returns": "Promise<{ result: object; }>",
         "tags": [],
         "docs": "",
         "complexTypes": [],
@@ -39,15 +39,15 @@
       },
       {
         "name": "encodeVideo",
-        "signature": "(options: { value: string; }) => Promise<{ value: string; }>",
+        "signature": "(options: { videoUri: string; resultPath: string; config: string; }) => Promise<{ result: object; }>",
         "parameters": [
           {
             "name": "options",
             "docs": "",
-            "type": "{ value: string; }"
+            "type": "{ videoUri: string; resultPath: string; config: string; }"
           }
         ],
-        "returns": "Promise<{ value: string; }>",
+        "returns": "Promise<{ result: object; }>",
         "tags": [],
         "docs": "",
         "complexTypes": [],
@@ -55,15 +55,15 @@
       },
       {
         "name": "getVideoInfo",
-        "signature": "(options: { value: string; }) => Promise<{ value: string; }>",
+        "signature": "(options: { videoPath: string; }) => Promise<{ result: object; }>",
         "parameters": [
           {
             "name": "options",
             "docs": "",
-            "type": "{ value: string; }"
+            "type": "{ videoPath: string; }"
           }
         ],
-        "returns": "Promise<{ value: string; }>",
+        "returns": "Promise<{ result: object; }>",
         "tags": [],
         "docs": "",
         "complexTypes": [],
@@ -71,15 +71,15 @@
       },
       {
         "name": "compareVideos",
-        "signature": "(options: { value: string; }) => Promise<{ value: string; }>",
+        "signature": "(options: { videoUris: string; }) => Promise<{ result: object; }>",
         "parameters": [
           {
             "name": "options",
             "docs": "",
-            "type": "{ value: string; }"
+            "type": "{ videoUris: string; }"
           }
         ],
-        "returns": "Promise<{ value: string; }>",
+        "returns": "Promise<{ result: object; }>",
         "tags": [],
         "docs": "",
         "complexTypes": [],
@@ -87,15 +87,15 @@
       },
       {
         "name": "mergeVideos",
-        "signature": "(options: { value: string; }) => Promise<{ value: string; }>",
+        "signature": "(options: { videoUris: string; resultPath: string; config: string; }) => Promise<{ result: object; }>",
         "parameters": [
           {
             "name": "options",
             "docs": "",
-            "type": "{ value: string; }"
+            "type": "{ videoUris: string; resultPath: string; config: string; }"
           }
         ],
-        "returns": "Promise<{ value: string; }>",
+        "returns": "Promise<{ result: object; }>",
         "tags": [],
         "docs": "",
         "complexTypes": [],
@@ -103,15 +103,15 @@
       },
       {
         "name": "cleanNoise",
-        "signature": "(options: { value: string; }) => Promise<{ value: string; }>",
+        "signature": "(options: { videoPath: string; resultPath: string; }) => Promise<{ result: object; }>",
         "parameters": [
           {
             "name": "options",
             "docs": "",
-            "type": "{ value: string; }"
+            "type": "{ videoPath: string; resultPath: string; }"
           }
         ],
-        "returns": "Promise<{ value: string; }>",
+        "returns": "Promise<{ result: object; }>",
         "tags": [],
         "docs": "",
         "complexTypes": [],
@@ -119,15 +119,15 @@
       },
       {
         "name": "editVideo",
-        "signature": "(options: { value: string; }) => Promise<{ value: string; }>",
+        "signature": "(options: { videoPath: string; resultPath: string; config: string; }) => Promise<{ result: object; }>",
         "parameters": [
           {
             "name": "options",
             "docs": "",
-            "type": "{ value: string; }"
+            "type": "{ videoPath: string; resultPath: string; config: string; }"
           }
         ],
-        "returns": "Promise<{ value: string; }>",
+        "returns": "Promise<{ result: object; }>",
         "tags": [],
         "docs": "",
         "complexTypes": [],
@@ -135,19 +135,35 @@
       },
       {
         "name": "generateThumbnail",
-        "signature": "(options: { value: string; }) => Promise<{ value: string; }>",
+        "signature": "(options: { videoPath: string; resultPath: string; config: string; position: number; width: number; height: number; precise: boolean; }) => Promise<{ result: object; }>",
         "parameters": [
           {
             "name": "options",
             "docs": "",
-            "type": "{ value: string; }"
+            "type": "{ videoPath: string; resultPath: string; config: string; position: number; width: number; height: number; precise: boolean; }"
           }
         ],
-        "returns": "Promise<{ value: string; }>",
+        "returns": "Promise<{ result: object; }>",
         "tags": [],
         "docs": "",
         "complexTypes": [],
         "slug": "generatethumbnail"
+      },
+      {
+        "name": "getResultPath",
+        "signature": "(options: { path: string; }) => Promise<{ resultPath: string; }>",
+        "parameters": [
+          {
+            "name": "options",
+            "docs": "",
+            "type": "{ path: string; }"
+          }
+        ],
+        "returns": "Promise<{ resultPath: string; }>",
+        "tags": [],
+        "docs": "",
+        "complexTypes": [],
+        "slug": "getresultpath"
       }
     ],
     "properties": []
