@@ -23,7 +23,7 @@
       },
       {
         "name": "concatVideos",
-        "signature": "(options: { videoUris: string; resultPath: string; }) => Promise<{ result: object; }>",
+        "signature": "(options: { videoUris: string; resultPath: string; }) => Promise<{ result: string; }>",
         "parameters": [
           {
             "name": "options",
@@ -31,7 +31,7 @@
             "type": "{ videoUris: string; resultPath: string; }"
           }
         ],
-        "returns": "Promise<{ result: object; }>",
+        "returns": "Promise<{ result: string; }>",
         "tags": [],
         "docs": "",
         "complexTypes": [],
@@ -119,12 +119,12 @@
       },
       {
         "name": "editVideo",
-        "signature": "(options: { videoPath: string; resultPath: string; config: string; }) => Promise<{ result: object; }>",
+        "signature": "(options: { videoPath: string; resultPath: string; }) => Promise<{ result: object; }>",
         "parameters": [
           {
             "name": "options",
             "docs": "",
-            "type": "{ videoPath: string; resultPath: string; config: string; }"
+            "type": "{ videoPath: string; resultPath: string; }"
           }
         ],
         "returns": "Promise<{ result: object; }>",
@@ -135,12 +135,12 @@
       },
       {
         "name": "generateThumbnail",
-        "signature": "(options: { videoPath: string; resultPath: string; config: string; position: number; width: number; height: number; precise: boolean; }) => Promise<{ result: object; }>",
+        "signature": "(options: { videoPath: string; resultPath: string; position: number; width: number; height: number; precise: boolean; }) => Promise<{ result: object; }>",
         "parameters": [
           {
             "name": "options",
             "docs": "",
-            "type": "{ videoPath: string; resultPath: string; config: string; position: number; width: number; height: number; precise: boolean; }"
+            "type": "{ videoPath: string; resultPath: string; position: number; width: number; height: number; precise: boolean; }"
           }
         ],
         "returns": "Promise<{ result: object; }>",
@@ -164,6 +164,54 @@
         "docs": "",
         "complexTypes": [],
         "slug": "getresultpath"
+      },
+      {
+        "name": "getRequestById",
+        "signature": "(options: { path: string; }) => Promise<{ resultPath: string; }>",
+        "parameters": [
+          {
+            "name": "options",
+            "docs": "",
+            "type": "{ path: string; }"
+          }
+        ],
+        "returns": "Promise<{ resultPath: string; }>",
+        "tags": [],
+        "docs": "",
+        "complexTypes": [],
+        "slug": "getrequestbyid"
+      },
+      {
+        "name": "processVideo",
+        "signature": "(options: { path: string; }) => Promise<{ resultPath: string; }>",
+        "parameters": [
+          {
+            "name": "options",
+            "docs": "",
+            "type": "{ path: string; }"
+          }
+        ],
+        "returns": "Promise<{ resultPath: string; }>",
+        "tags": [],
+        "docs": "",
+        "complexTypes": [],
+        "slug": "processvideo"
+      },
+      {
+        "name": "cancelVideo",
+        "signature": "(options: { path: string; }) => Promise<{ resultPath: string; }>",
+        "parameters": [
+          {
+            "name": "options",
+            "docs": "",
+            "type": "{ path: string; }"
+          }
+        ],
+        "returns": "Promise<{ resultPath: string; }>",
+        "tags": [],
+        "docs": "",
+        "complexTypes": [],
+        "slug": "cancelvideo"
       }
     ],
     "properties": []

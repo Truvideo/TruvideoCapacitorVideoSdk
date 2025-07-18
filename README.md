@@ -23,6 +23,9 @@ npx cap sync
 * [`editVideo(...)`](#editvideo)
 * [`generateThumbnail(...)`](#generatethumbnail)
 * [`getResultPath(...)`](#getresultpath)
+* [`getRequestById(...)`](#getrequestbyid)
+* [`processVideo(...)`](#processvideo)
+* [`cancelVideo(...)`](#cancelvideo)
 
 </docgen-index>
 
@@ -47,14 +50,14 @@ echo(options: { value: string; }) => Promise<{ value: string; }>
 ### concatVideos(...)
 
 ```typescript
-concatVideos(options: { videoUris: string; resultPath: string; }) => Promise<{ result: object; }>
+concatVideos(options: { videoUris: string; resultPath: string; }) => Promise<{ result: string; }>
 ```
 
 | Param         | Type                                                    |
 | ------------- | ------------------------------------------------------- |
 | **`options`** | <code>{ videoUris: string; resultPath: string; }</code> |
 
-**Returns:** <code>Promise&lt;{ result: object; }&gt;</code>
+**Returns:** <code>Promise&lt;{ result: string; }&gt;</code>
 
 --------------------
 
@@ -137,12 +140,12 @@ cleanNoise(options: { videoPath: string; resultPath: string; }) => Promise<{ res
 ### editVideo(...)
 
 ```typescript
-editVideo(options: { videoPath: string; resultPath: string; config: string; }) => Promise<{ result: object; }>
+editVideo(options: { videoPath: string; resultPath: string; }) => Promise<{ result: object; }>
 ```
 
-| Param         | Type                                                                    |
-| ------------- | ----------------------------------------------------------------------- |
-| **`options`** | <code>{ videoPath: string; resultPath: string; config: string; }</code> |
+| Param         | Type                                                    |
+| ------------- | ------------------------------------------------------- |
+| **`options`** | <code>{ videoPath: string; resultPath: string; }</code> |
 
 **Returns:** <code>Promise&lt;{ result: object; }&gt;</code>
 
@@ -152,12 +155,12 @@ editVideo(options: { videoPath: string; resultPath: string; config: string; }) =
 ### generateThumbnail(...)
 
 ```typescript
-generateThumbnail(options: { videoPath: string; resultPath: string; config: string; position: number; width: number; height: number; precise: boolean; }) => Promise<{ result: object; }>
+generateThumbnail(options: { videoPath: string; resultPath: string; position: number; width: number; height: number; precise: boolean; }) => Promise<{ result: object; }>
 ```
 
-| Param         | Type                                                                                                                                       |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| **`options`** | <code>{ videoPath: string; resultPath: string; config: string; position: number; width: number; height: number; precise: boolean; }</code> |
+| Param         | Type                                                                                                                       |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| **`options`** | <code>{ videoPath: string; resultPath: string; position: number; width: number; height: number; precise: boolean; }</code> |
 
 **Returns:** <code>Promise&lt;{ result: object; }&gt;</code>
 
@@ -168,6 +171,51 @@ generateThumbnail(options: { videoPath: string; resultPath: string; config: stri
 
 ```typescript
 getResultPath(options: { path: string; }) => Promise<{ resultPath: string; }>
+```
+
+| Param         | Type                           |
+| ------------- | ------------------------------ |
+| **`options`** | <code>{ path: string; }</code> |
+
+**Returns:** <code>Promise&lt;{ resultPath: string; }&gt;</code>
+
+--------------------
+
+
+### getRequestById(...)
+
+```typescript
+getRequestById(options: { path: string; }) => Promise<{ resultPath: string; }>
+```
+
+| Param         | Type                           |
+| ------------- | ------------------------------ |
+| **`options`** | <code>{ path: string; }</code> |
+
+**Returns:** <code>Promise&lt;{ resultPath: string; }&gt;</code>
+
+--------------------
+
+
+### processVideo(...)
+
+```typescript
+processVideo(options: { path: string; }) => Promise<{ resultPath: string; }>
+```
+
+| Param         | Type                           |
+| ------------- | ------------------------------ |
+| **`options`** | <code>{ path: string; }</code> |
+
+**Returns:** <code>Promise&lt;{ resultPath: string; }&gt;</code>
+
+--------------------
+
+
+### cancelVideo(...)
+
+```typescript
+cancelVideo(options: { path: string; }) => Promise<{ resultPath: string; }>
 ```
 
 | Param         | Type                           |
