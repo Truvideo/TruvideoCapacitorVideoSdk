@@ -29,8 +29,11 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import kotlin.Unit;
 import kotlinx.serialization.json.JsonArray;
 import truvideo.sdk.common.exceptions.TruvideoSdkException;
 
@@ -75,7 +78,7 @@ public class TruvideoSdkVideoPlugin extends Plugin {
             @Override
             public void onComplete(TruvideoSdkVideoRequest truvideoSdkVideoRequest) {
                 JSObject ret = new JSObject();
-                ret.put("result", truvideoSdkVideoRequest.toJson());
+                ret.put("result",returnRequest(truvideoSdkVideoRequest));
                 call.resolve(ret);
             }
 
@@ -84,6 +87,17 @@ public class TruvideoSdkVideoPlugin extends Plugin {
                 call.reject(e.getMessage(), e);
             }
         });
+    }
+
+    public String returnRequest(TruvideoSdkVideoRequest request) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", request.getId());
+        map.put("createdAt", request.getCreatedAt());
+        map.put("status", request.getStatus().name());
+        map.put("type", request.getType().name());
+        map.put("updatedAt", request.getUpdatedAt());
+
+        return new Gson().toJson(map);
     }
 
     @PluginMethod
@@ -136,7 +150,7 @@ public class TruvideoSdkVideoPlugin extends Plugin {
             @Override
             public void onComplete(TruvideoSdkVideoRequest truvideoSdkVideoRequest) {
                 JSObject ret = new JSObject();
-                ret.put("result", truvideoSdkVideoRequest.toJson());
+                ret.put("result",returnRequest(truvideoSdkVideoRequest));
                 call.resolve(ret);
             }
 
@@ -218,7 +232,7 @@ public class TruvideoSdkVideoPlugin extends Plugin {
             @Override
             public void onComplete(TruvideoSdkVideoRequest truvideoSdkVideoRequest) {
                 JSObject ret = new JSObject();
-                ret.put("result", truvideoSdkVideoRequest.toJson());
+                ret.put("result", returnRequest(truvideoSdkVideoRequest));
                 call.resolve(ret);
             }
 
@@ -228,6 +242,121 @@ public class TruvideoSdkVideoPlugin extends Plugin {
             }
         });
     }
+
+    @PluginMethod
+    public void getRequestById(PluginCall call) {
+        String requestId = call.getString("id");
+        if(requestId == null){
+            return;
+        }
+        TruvideoSdkVideo.getRequestById(requestId, new TruvideoSdkVideoCallback<TruvideoSdkVideoRequest>() {
+            @Override
+            public void onComplete(TruvideoSdkVideoRequest truvideoSdkVideoRequest) {
+                JSObject ret = new JSObject();
+                ret.put("result", returnRequest(truvideoSdkVideoRequest));
+                call.resolve(ret);
+            }
+
+            @Override
+            public void onError(@NonNull TruvideoSdkException e) {
+                call.reject(e.getMessage(), e);
+            }
+        });
+    }
+
+    @PluginMethod
+    public void processVideo(PluginCall call) {
+        String requestId = call.getString("id");
+        if(requestId == null){
+            return;
+        }
+        TruvideoSdkVideo.getRequestById(requestId, new TruvideoSdkVideoCallback<TruvideoSdkVideoRequest>() {
+            @Override
+            public void onComplete(TruvideoSdkVideoRequest truvideoSdkVideoRequest) {
+                truvideoSdkVideoRequest.process(new TruvideoSdkVideoCallback<String>() {
+                    @Override
+                    public void onComplete(String s) {
+                        JSObject ret = new JSObject();
+                        ret.put("result", returnRequest(truvideoSdkVideoRequest));
+                        call.resolve(ret);
+                    }
+
+                    @Override
+                    public void onError(@NonNull TruvideoSdkException e) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onError(@NonNull TruvideoSdkException e) {
+                call.reject(e.getMessage(), e);
+            }
+        });
+    }
+
+    @PluginMethod
+    public void delete(PluginCall call) {
+        String requestId = call.getString("id");
+        if(requestId == null){
+            return;
+        }
+        TruvideoSdkVideo.getRequestById(requestId, new TruvideoSdkVideoCallback<TruvideoSdkVideoRequest>() {
+            @Override
+            public void onComplete(TruvideoSdkVideoRequest truvideoSdkVideoRequest) {
+                truvideoSdkVideoRequest.delete(new TruvideoSdkVideoCallback<Unit>() {
+                    @Override
+                    public void onComplete(Unit unit) {
+                        JSObject ret = new JSObject();
+                        ret.put("result", returnRequest(truvideoSdkVideoRequest));
+                        call.resolve(ret);
+                    }
+
+                    @Override
+                    public void onError(@NonNull TruvideoSdkException e) {
+                        call.reject(e.getMessage(), e);
+                    }
+                });
+            }
+
+            @Override
+            public void onError(@NonNull TruvideoSdkException e) {
+                call.reject(e.getMessage(), e);
+            }
+        });
+    }
+
+    @PluginMethod
+    public void cancelVideo(PluginCall call) {
+        String requestId = call.getString("id");
+        if(requestId == null){
+            return;
+        }
+        TruvideoSdkVideo.getRequestById(requestId, new TruvideoSdkVideoCallback<TruvideoSdkVideoRequest>() {
+            @Override
+            public void onComplete(TruvideoSdkVideoRequest truvideoSdkVideoRequest) {
+                truvideoSdkVideoRequest.cancel(new TruvideoSdkVideoCallback<Unit>() {
+                    @Override
+                    public void onComplete(Unit unit) {
+                        JSObject ret = new JSObject();
+                        ret.put("result", returnRequest(truvideoSdkVideoRequest));
+                        call.resolve(ret);
+                    }
+
+                    @Override
+                    public void onError(@NonNull TruvideoSdkException e) {
+                        call.reject(e.getMessage(), e);
+                    }
+                });
+            }
+
+            @Override
+            public void onError(@NonNull TruvideoSdkException e) {
+                call.reject(e.getMessage(), e);
+            }
+        });
+    }
+
 
 
     @PluginMethod
