@@ -64,7 +64,7 @@ export declare class EncodeBuilder {
     constructor(filePaths: string, resultPath: string);
     setHeight(height: number): EncodeBuilder;
     setWidth(width: number): EncodeBuilder;
-    setFrameRate(frameRate: FrameRate): void;
+    setFrameRate(frameRate: FrameRate): this;
     build(): Promise<EncodeBuilder>;
     process(): Promise<BuilderResponse>;
     cancel(): Promise<BuilderResponse>;
