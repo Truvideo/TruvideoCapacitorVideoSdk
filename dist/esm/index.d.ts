@@ -63,7 +63,7 @@ export declare class EncodeBuilder {
     private mergeData;
     constructor(filePaths: string, resultPath: string);
     setHeight(height: number): EncodeBuilder;
-    setWigth(width: number): EncodeBuilder;
+    setWidth(width: number): EncodeBuilder;
     setFrameRate(frameRate: FrameRate): void;
     build(): Promise<EncodeBuilder>;
     process(): Promise<BuilderResponse>;

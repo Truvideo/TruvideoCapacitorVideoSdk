@@ -105,7 +105,7 @@ export class MergeBuilder {
         } else {
             this.frameRate = 'fiftyFps';
         }
-        return this;
+        return this; 
     }
 
     async build(): Promise<MergeBuilder> {
@@ -227,7 +227,7 @@ export class EncodeBuilder {
         return this;
     }
 
-    setWigth(width: number): EncodeBuilder {
+    setWidth(width: number): EncodeBuilder {
         this.width = '' + width;
         return this;
     }
