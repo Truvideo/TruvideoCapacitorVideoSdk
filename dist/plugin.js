@@ -235,7 +235,6 @@ var capacitorTruvideoSdkVideo = (function (exports, core) {
     exports.ConcatBuilder = ConcatBuilder;
     exports.EncodeBuilder = EncodeBuilder;
     exports.MergeBuilder = MergeBuilder;
-    exports.TruvideoSdkVideo = TruvideoSdkVideo;
     exports.cleanNoise = cleanNoise;
     exports.compareVideos = compareVideos;
     exports.editVideo = editVideo;

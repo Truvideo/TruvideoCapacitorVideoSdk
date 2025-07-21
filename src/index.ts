@@ -4,10 +4,6 @@ import type { TruvideoSdkVideoPlugin } from './definitions';
 
 const TruvideoSdkVideo = registerPlugin<TruvideoSdkVideoPlugin>('TruvideoSdkVideo');
 
-export * from './definitions';
-export { TruvideoSdkVideo };
-
-
 export function getVideoInfo(videoPath: string): Promise<{ result: object }> {
     return TruvideoSdkVideo.getVideoInfo({ videoPath });
 }

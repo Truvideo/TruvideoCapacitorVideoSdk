@@ -1,7 +1,5 @@
 import { registerPlugin } from '@capacitor/core';
 const TruvideoSdkVideo = registerPlugin('TruvideoSdkVideo');
-export * from './definitions';
-export { TruvideoSdkVideo };
 export function getVideoInfo(videoPath) {
     return TruvideoSdkVideo.getVideoInfo({ videoPath });
 }
