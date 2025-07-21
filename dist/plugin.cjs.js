@@ -54,7 +54,7 @@ class MergeBuilder {
         this.height = '' + height;
         return this;
     }
-    setWigth(width) {
+    setWidth(width) {
         this.width = '' + width;
         return this;
     }

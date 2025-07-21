@@ -86,7 +86,7 @@ export class MergeBuilder {
         return this;
     }
 
-    setWigth(width: number): MergeBuilder {
+    setWidth(width: number): MergeBuilder {
         this.width = '' + width;
         return this;
     }
