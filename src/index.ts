@@ -91,7 +91,7 @@ export class MergeBuilder {
         return this;
     }
 
-    setFrameRate(frameRate: FrameRate) {
+    setFrameRate(frameRate: FrameRate) : MergeBuilder {
         if (frameRate == FrameRate.fiftyFps) {
             this.frameRate = 'fiftyFps';
         } else if (frameRate == FrameRate.sixtyFps) {
@@ -105,6 +105,7 @@ export class MergeBuilder {
         } else {
             this.frameRate = 'fiftyFps';
         }
+        return this;
     }
 
     async build(): Promise<MergeBuilder> {

@@ -40,7 +40,7 @@ export declare class MergeBuilder {
     constructor(filePaths: string, resultPath: string);
     setHeight(height: number): MergeBuilder;
     setWidth(width: number): MergeBuilder;
-    setFrameRate(frameRate: FrameRate): void;
+    setFrameRate(frameRate: FrameRate): MergeBuilder;
     build(): Promise<MergeBuilder>;
     process(): Promise<BuilderResponse>;
     cancel(): Promise<BuilderResponse>;

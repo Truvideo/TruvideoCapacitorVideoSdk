@@ -77,6 +77,7 @@ class MergeBuilder {
         else {
             this.frameRate = 'fiftyFps';
         }
+        return this;
     }
     async build() {
         const config = {
