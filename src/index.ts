@@ -154,7 +154,7 @@ export class MergeBuilder {
             path: this.mergeData.id
         });
 
-        
+
         if (!response || !response.result) {
             console.error("❌ [Process] Invalid response from processVideo. Missing resultPath.");
             throw new Error('❌ processVideo did not return a valid resultPath.');
@@ -303,6 +303,11 @@ export class EncodeBuilder {
                 resultPath: this.resultPath,
                 config: JSON.stringify(config)
             });
+
+
+        if (!response || !response.result) {
+            throw new Error("Build failed: No valid result from encodeVideo");
+        }
 
         this.mergeData = response.result as BuilderResponse;
 

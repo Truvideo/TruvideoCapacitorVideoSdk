@@ -236,6 +236,9 @@ var capacitorTruvideoSdkVideo = (function (exports, core) {
                 resultPath: this.resultPath,
                 config: JSON.stringify(config)
             });
+            if (!response || !response.result) {
+                throw new Error("Build failed: No valid result from encodeVideo");
+            }
             this.mergeData = response.result;
             return this;
         }
