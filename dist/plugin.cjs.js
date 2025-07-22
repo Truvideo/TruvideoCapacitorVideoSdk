@@ -94,20 +94,13 @@ class MergeBuilder {
             config: JSON.stringify(config),
         });
         console.log("📥 [Build] mergeVideos API Raw Response:", response);
-        if (!response || !response.result) {
-            console.error("❌ [Build] Invalid mergeVideos response. No result field found.");
-            throw new Error('❌ mergeVideos did not return a valid result.');
+        if (!(response === null || response === void 0 ? void 0 : response.result) || typeof response.result !== 'object') {
+            throw new Error('❌ mergeVideos result is not a valid object.');
         }
-        // Parse if response.result is stringified JSON
-        const parsed = typeof response.result === 'string'
-            ? JSON.parse(response.result)
-            : response.result;
-        console.log("📤 [Build] Parsed mergeVideos result:", parsed);
-        if (!parsed.id) {
-            console.error("❌ [Build] mergeVideos result is missing `id` field:", parsed);
+        this.mergeData = response.result;
+        if (!this.mergeData.id) {
             throw new Error('❌ mergeVideos result is missing `id`.');
         }
-        this.mergeData = parsed;
         console.log("✅ [Build] MergeBuilder build success. MergeData:", this.mergeData);
         console.log("🔁 [Build] Returning instance of MergeBuilder:", this);
         return this;
