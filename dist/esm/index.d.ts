@@ -55,16 +55,16 @@ export declare class ConcatBuilder {
     cancel(): Promise<BuilderResponse>;
 }
 export declare class EncodeBuilder {
-    private _filePath;
+    private filePath;
     private resultPath;
     private height;
     private width;
     private frameRate;
-    private mergeData;
-    constructor(filePaths: string, resultPath: string);
+    private mergeData?;
+    constructor(filePath: string, resultPath: string);
     setHeight(height: number): EncodeBuilder;
     setWidth(width: number): EncodeBuilder;
-    setFrameRate(frameRate: FrameRate): this;
+    setFrameRate(frameRate: FrameRate): EncodeBuilder;
     build(): Promise<EncodeBuilder>;
     process(): Promise<BuilderResponse>;
     cancel(): Promise<BuilderResponse>;

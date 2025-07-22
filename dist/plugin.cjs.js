@@ -153,117 +153,137 @@ class ConcatBuilder {
         this.resultPath = resultPath;
     }
     async build() {
-        var response = await TruvideoSdkVideo.concatVideos({
+        const response = await TruvideoSdkVideo.concatVideos({
             videoUris: this._filePath,
             resultPath: this.resultPath
         });
-        this.concatData = JSON.parse(response.result);
+        if (!response || typeof response !== 'object') {
+            throw new Error("Build failed: concatVideos response is not an object");
+        }
+        if (!response.result || typeof response.result !== 'object') {
+            throw new Error("Build failed: response.result is not valid");
+        }
+        this.concatData = response.result;
         return this;
     }
     async process() {
         var _a;
         if (!((_a = this.concatData) === null || _a === void 0 ? void 0 : _a.id)) {
-            throw new Error('concatData.id is undefined. Call build() and ensure it succeeds before calling process().');
+            throw new Error('concatData.id is undefined. Call build() first.');
         }
-        var response = await TruvideoSdkVideo.processVideo({
+        const response = await TruvideoSdkVideo.processVideo({
             path: this.concatData.id
         });
+        if (!response || typeof response !== 'object') {
+            throw new Error("Process failed: response is not an object");
+        }
+        if (!response.result || typeof response.result !== 'string') {
+            throw new Error("Process failed: response.result is not a valid string");
+        }
         this.concatData = JSON.parse(response.result);
         return this.concatData;
     }
     async cancel() {
         var _a;
         if (!((_a = this.concatData) === null || _a === void 0 ? void 0 : _a.id)) {
-            throw new Error('concatData.id is undefined. Call build() and ensure it succeeds before calling cancel().');
+            throw new Error('concatData.id is undefined. Call build() first.');
         }
-        var response = await TruvideoSdkVideo.cancelVideo({
+        const response = await TruvideoSdkVideo.cancelVideo({
             path: this.concatData.id
         });
+        if (!response || typeof response !== 'object') {
+            throw new Error("Cancel failed: response is not an object");
+        }
+        if (!response.result || typeof response.result !== 'string') {
+            throw new Error("Cancel failed: response.result is not a valid string");
+        }
         this.concatData = JSON.parse(response.result);
         return this.concatData;
     }
 }
 class EncodeBuilder {
-    constructor(filePaths, resultPath) {
+    constructor(filePath, resultPath) {
         this.height = '';
         this.width = '';
         this.frameRate = '';
-        if (!filePaths) {
+        if (!filePath)
             throw new Error('filePath is required for EncodeBuilder.');
-        }
-        if (!resultPath) {
+        if (!resultPath)
             throw new Error('resultPath is required for EncodeBuilder.');
-        }
-        this._filePath = filePaths;
+        this.filePath = filePath;
         this.resultPath = resultPath;
     }
     setHeight(height) {
-        this.height = '' + height;
+        this.height = height.toString();
         return this;
     }
     setWidth(width) {
-        this.width = '' + width;
+        this.width = width.toString();
         return this;
     }
     setFrameRate(frameRate) {
-        if (frameRate == exports.FrameRate.fiftyFps) {
-            this.frameRate = 'fiftyFps';
-        }
-        else if (frameRate == exports.FrameRate.sixtyFps) {
-            this.frameRate = 'sixtyFps';
-        }
-        else if (frameRate == exports.FrameRate.twentyFourFps) {
-            this.frameRate = 'twentyFourFps';
-        }
-        else if (frameRate == exports.FrameRate.twentyFiveFps) {
-            this.frameRate = 'twentyFiveFps';
-        }
-        else if (frameRate == exports.FrameRate.thirtyFps) {
-            this.frameRate = 'thirtyFps';
-        }
-        else {
-            this.frameRate = 'fiftyFps';
+        // Map enum to valid frame rate string
+        switch (frameRate) {
+            case exports.FrameRate.fiftyFps:
+                this.frameRate = 'fiftyFps';
+                break;
+            case exports.FrameRate.sixtyFps:
+                this.frameRate = 'sixtyFps';
+                break;
+            case exports.FrameRate.twentyFourFps:
+                this.frameRate = 'twentyFourFps';
+                break;
+            case exports.FrameRate.twentyFiveFps:
+                this.frameRate = 'twentyFiveFps';
+                break;
+            case exports.FrameRate.thirtyFps:
+                this.frameRate = 'thirtyFps';
+                break;
+            default:
+                this.frameRate = 'fiftyFps';
         }
         return this;
     }
+    // Builds the video using encodeVideo method
     async build() {
         const config = {
             height: this.height,
             width: this.width,
             framesRate: this.frameRate,
         };
-        var response = await TruvideoSdkVideo.encodeVideo({
-            videoUri: this._filePath,
+        const response = await TruvideoSdkVideo.encodeVideo({
+            videoUri: this.filePath,
             resultPath: this.resultPath,
             config: JSON.stringify(config)
         });
-        console.log("📥 encodeVideo response:", response);
         if (!response || typeof response !== 'object') {
+            console.error("❌ Invalid response from encodeVideo:", response);
             throw new Error("Build failed: encodeVideo response is not an object");
         }
         if (!response.result || typeof response.result !== 'object') {
+            console.error("❌ Invalid result in encodeVideo response:", response.result);
             throw new Error("Build failed: response.result is not valid");
         }
         this.mergeData = response.result;
         return this;
     }
+    // Process the video after build
     async process() {
         var _a;
         if (!((_a = this.mergeData) === null || _a === void 0 ? void 0 : _a.id)) {
             throw new Error('Call build() and ensure it succeeds before calling process().');
         }
-        // process video
-        var response = await TruvideoSdkVideo.processVideo({ path: this.mergeData.id });
+        const response = await TruvideoSdkVideo.processVideo({ path: this.mergeData.id });
         this.mergeData = JSON.parse(response.result);
         return this.mergeData;
     }
+    // Cancel the video encoding
     async cancel() {
         var _a;
         if (!((_a = this.mergeData) === null || _a === void 0 ? void 0 : _a.id)) {
             throw new Error('Call build() and ensure it succeeds before calling cancel().');
         }
-        // cancel video
-        var response = await TruvideoSdkVideo.cancelVideo({ path: this.mergeData.id });
+        const response = await TruvideoSdkVideo.cancelVideo({ path: this.mergeData.id });
         this.mergeData = JSON.parse(response.result);
         return this.mergeData;
     }
