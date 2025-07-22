@@ -8,7 +8,7 @@ export interface TruvideoSdkVideoPlugin {
         videoUris: string;
         resultPath: string;
     }): Promise<{
-        result: object;
+        result: string;
     }>;
     encodeVideo(options: {
         videoUri: string;

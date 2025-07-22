@@ -50,14 +50,14 @@ echo(options: { value: string; }) => Promise<{ value: string; }>
 ### concatVideos(...)
 
 ```typescript
-concatVideos(options: { videoUris: string; resultPath: string; }) => Promise<{ result: object; }>
+concatVideos(options: { videoUris: string; resultPath: string; }) => Promise<{ result: string; }>
 ```
 
 | Param         | Type                                                    |
 | ------------- | ------------------------------------------------------- |
 | **`options`** | <code>{ videoUris: string; resultPath: string; }</code> |
 
-**Returns:** <code>Promise&lt;{ result: object; }&gt;</code>
+**Returns:** <code>Promise&lt;{ result: string; }&gt;</code>
 
 --------------------
 

@@ -6,7 +6,7 @@ export interface TruvideoSdkVideoPlugin {
     concatVideos(options: {
         videoUris: string;
         resultPath: string
-    }): Promise<{ result: object }>;
+    }): Promise<{ result: string }>;
 
     encodeVideo(options: {
         videoUri: string;
