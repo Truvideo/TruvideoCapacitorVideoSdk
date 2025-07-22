@@ -255,7 +255,7 @@ public class TruvideoSdkVideoPlugin extends Plugin {
 
     @PluginMethod
     public void getRequestById(PluginCall call) {
-        String requestId = call.getString("id");
+        String requestId = call.getString("path");
         if(requestId == null){
             return;
         }
@@ -276,7 +276,7 @@ public class TruvideoSdkVideoPlugin extends Plugin {
 
     @PluginMethod
     public void processVideo(PluginCall call) {
-        String requestId = call.getString("id");
+        String requestId = call.getString("path");
         if(requestId == null){
             return;
         }
@@ -307,7 +307,7 @@ public class TruvideoSdkVideoPlugin extends Plugin {
 
     @PluginMethod
     public void delete(PluginCall call) {
-        String requestId = call.getString("id");
+        String requestId = call.getString("path");
         if(requestId == null){
             return;
         }
@@ -338,7 +338,7 @@ public class TruvideoSdkVideoPlugin extends Plugin {
 
     @PluginMethod
     public void cancelVideo(PluginCall call) {
-        String requestId = call.getString("id");
+        String requestId = call.getString("path");
         if(requestId == null){
             return;
         }
@@ -451,7 +451,7 @@ public class TruvideoSdkVideoPlugin extends Plugin {
         String basePath = getContext().getFilesDir().getPath();
 
         JSObject ret = new JSObject();
-        ret.put("resultPath", new File(basePath + "/camera/" + path).getPath());
+        ret.put("result", new File(basePath + "/camera/" + path).getPath());
         call.resolve(ret);
     }
 

@@ -39,7 +39,7 @@
       },
       {
         "name": "encodeVideo",
-        "signature": "(options: { videoUri: string; resultPath: string; config: string; }) => Promise<{ result: object; }>",
+        "signature": "(options: { videoUri: string; resultPath: string; config: string; }) => Promise<{ result: string; }>",
         "parameters": [
           {
             "name": "options",
@@ -47,7 +47,7 @@
             "type": "{ videoUri: string; resultPath: string; config: string; }"
           }
         ],
-        "returns": "Promise<{ result: object; }>",
+        "returns": "Promise<{ result: string; }>",
         "tags": [],
         "docs": "",
         "complexTypes": [],

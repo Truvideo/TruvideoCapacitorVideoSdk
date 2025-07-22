@@ -108,11 +108,9 @@ export class MergeBuilder {
             console.error("❌ [Process] Missing mergeData.id. Ensure build() was called successfully.");
             throw new Error('⚠️ Call build() and ensure it succeeds before calling process().');
         }
-        console.log("📤 [Process] Starting processVideo with path:", this.mergeData.id);
         const response = await TruvideoSdkVideo.processVideo({
             path: this.mergeData.id
         });
-        console.log("📥 [Process] Raw processVideo response:", response);
         if (!response || !response.result) {
             console.error("❌ [Process] Invalid response from processVideo. Missing resultPath.");
             throw new Error('❌ processVideo did not return a valid resultPath.');

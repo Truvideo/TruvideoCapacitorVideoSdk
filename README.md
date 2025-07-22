@@ -65,14 +65,14 @@ concatVideos(options: { videoUris: string; resultPath: string; }) => Promise<{ r
 ### encodeVideo(...)
 
 ```typescript
-encodeVideo(options: { videoUri: string; resultPath: string; config: string; }) => Promise<{ result: object; }>
+encodeVideo(options: { videoUri: string; resultPath: string; config: string; }) => Promise<{ result: string; }>
 ```
 
 | Param         | Type                                                                   |
 | ------------- | ---------------------------------------------------------------------- |
 | **`options`** | <code>{ videoUri: string; resultPath: string; config: string; }</code> |
 
-**Returns:** <code>Promise&lt;{ result: object; }&gt;</code>
+**Returns:** <code>Promise&lt;{ result: string; }&gt;</code>
 
 --------------------
 

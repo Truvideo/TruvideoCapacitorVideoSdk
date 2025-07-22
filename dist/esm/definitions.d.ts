@@ -15,7 +15,7 @@ export interface TruvideoSdkVideoPlugin {
         resultPath: string;
         config: string;
     }): Promise<{
-        result: object;
+        result: string;
     }>;
     getVideoInfo(options: {
         videoPath: string;
