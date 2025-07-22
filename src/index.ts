@@ -24,7 +24,7 @@ export function editVideo(
 ): Promise<{ result: object }> {
     return TruvideoSdkVideo.editVideo({ videoPath: videoUri, resultPath: resultPath });
 }
-export function getResultPath(videoPath: string): Promise<{ resultPath: string }> {
+export function getResultPath(videoPath: string): Promise<{ result: string }> {
     return TruvideoSdkVideo.getResultPath({ path: videoPath });
 }
 
@@ -158,15 +158,15 @@ export class MergeBuilder {
 
         console.log("📥 [Process] Raw processVideo response:", response);
 
-        if (!response || !response.resultPath) {
+        if (!response || !response.result) {
             console.error("❌ [Process] Invalid response from processVideo. Missing resultPath.");
             throw new Error('❌ processVideo did not return a valid resultPath.');
         }
 
         try {
-            this.mergeData = JSON.parse(response.resultPath) as BuilderResponse;
+            this.mergeData = JSON.parse(response.result) as BuilderResponse;
         } catch (e) {
-            console.error("❌ [Process] Failed to parse resultPath JSON:", response.resultPath, e);
+            console.error("❌ [Process] Failed to parse resultPath JSON:", response.result, e);
             throw new Error('❌ Failed to parse resultPath from processVideo.');
         }
 
@@ -186,11 +186,11 @@ export class MergeBuilder {
             { path: this.mergeData.id }
         );
 
-        if (!response || !response.resultPath) {
+        if (!response || !response.result) {
             throw new Error('❌ cancelVideo did not return a valid resultPath.');
         }
 
-        this.mergeData = JSON.parse(response.resultPath) as BuilderResponse;
+        this.mergeData = JSON.parse(response.result) as BuilderResponse;
         return this.mergeData;
     }
 }
@@ -229,7 +229,7 @@ export class ConcatBuilder {
         var response = await TruvideoSdkVideo.processVideo({
             path: this.concatData.id
         });
-        this.concatData = JSON.parse(response.resultPath) as BuilderResponse;
+        this.concatData = JSON.parse(response.result) as BuilderResponse;
         return this.concatData;
     }
 
@@ -242,7 +242,7 @@ export class ConcatBuilder {
         var response = await TruvideoSdkVideo.cancelVideo({
             path: this.concatData.id
         });
-        this.concatData = JSON.parse(response.resultPath) as BuilderResponse;
+        this.concatData = JSON.parse(response.result) as BuilderResponse;
         return this.concatData;
     }
 }
@@ -322,7 +322,7 @@ export class EncodeBuilder {
         var response = await TruvideoSdkVideo.processVideo(
             { path: this.mergeData.id }
         );
-        this.mergeData = JSON.parse(response.resultPath) as BuilderResponse;
+        this.mergeData = JSON.parse(response.result) as BuilderResponse;
         return this.mergeData;
     }
 
@@ -337,7 +337,7 @@ export class EncodeBuilder {
             { path: this.mergeData.id }
         );
 
-        this.mergeData = JSON.parse(response.resultPath) as BuilderResponse;
+        this.mergeData = JSON.parse(response.result) as BuilderResponse;
         return this.mergeData;
     }
 }

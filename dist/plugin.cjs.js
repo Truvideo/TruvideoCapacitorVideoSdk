@@ -116,15 +116,15 @@ class MergeBuilder {
             path: this.mergeData.id
         });
         console.log("📥 [Process] Raw processVideo response:", response);
-        if (!response || !response.resultPath) {
+        if (!response || !response.result) {
             console.error("❌ [Process] Invalid response from processVideo. Missing resultPath.");
             throw new Error('❌ processVideo did not return a valid resultPath.');
         }
         try {
-            this.mergeData = JSON.parse(response.resultPath);
+            this.mergeData = JSON.parse(response.result);
         }
         catch (e) {
-            console.error("❌ [Process] Failed to parse resultPath JSON:", response.resultPath, e);
+            console.error("❌ [Process] Failed to parse resultPath JSON:", response.result, e);
             throw new Error('❌ Failed to parse resultPath from processVideo.');
         }
         console.log("✅ [Process] Video processing complete. Processed Data:", this.mergeData);
@@ -136,10 +136,10 @@ class MergeBuilder {
             throw new Error('Call build() and ensure it succeeds before calling cancel().');
         }
         var response = await TruvideoSdkVideo.cancelVideo({ path: this.mergeData.id });
-        if (!response || !response.resultPath) {
+        if (!response || !response.result) {
             throw new Error('❌ cancelVideo did not return a valid resultPath.');
         }
-        this.mergeData = JSON.parse(response.resultPath);
+        this.mergeData = JSON.parse(response.result);
         return this.mergeData;
     }
 }
@@ -170,7 +170,7 @@ class ConcatBuilder {
         var response = await TruvideoSdkVideo.processVideo({
             path: this.concatData.id
         });
-        this.concatData = JSON.parse(response.resultPath);
+        this.concatData = JSON.parse(response.result);
         return this.concatData;
     }
     async cancel() {
@@ -181,7 +181,7 @@ class ConcatBuilder {
         var response = await TruvideoSdkVideo.cancelVideo({
             path: this.concatData.id
         });
-        this.concatData = JSON.parse(response.resultPath);
+        this.concatData = JSON.parse(response.result);
         return this.concatData;
     }
 }
@@ -249,7 +249,7 @@ class EncodeBuilder {
         }
         // process video
         var response = await TruvideoSdkVideo.processVideo({ path: this.mergeData.id });
-        this.mergeData = JSON.parse(response.resultPath);
+        this.mergeData = JSON.parse(response.result);
         return this.mergeData;
     }
     async cancel() {
@@ -259,7 +259,7 @@ class EncodeBuilder {
         }
         // cancel video
         var response = await TruvideoSdkVideo.cancelVideo({ path: this.mergeData.id });
-        this.mergeData = JSON.parse(response.resultPath);
+        this.mergeData = JSON.parse(response.result);
         return this.mergeData;
     }
 }

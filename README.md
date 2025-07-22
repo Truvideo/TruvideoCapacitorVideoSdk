@@ -170,14 +170,14 @@ generateThumbnail(options: { videoPath: string; resultPath: string; position: nu
 ### getResultPath(...)
 
 ```typescript
-getResultPath(options: { path: string; }) => Promise<{ resultPath: string; }>
+getResultPath(options: { path: string; }) => Promise<{ result: string; }>
 ```
 
 | Param         | Type                           |
 | ------------- | ------------------------------ |
 | **`options`** | <code>{ path: string; }</code> |
 
-**Returns:** <code>Promise&lt;{ resultPath: string; }&gt;</code>
+**Returns:** <code>Promise&lt;{ result: string; }&gt;</code>
 
 --------------------
 
@@ -185,14 +185,14 @@ getResultPath(options: { path: string; }) => Promise<{ resultPath: string; }>
 ### getRequestById(...)
 
 ```typescript
-getRequestById(options: { path: string; }) => Promise<{ resultPath: string; }>
+getRequestById(options: { path: string; }) => Promise<{ result: string; }>
 ```
 
 | Param         | Type                           |
 | ------------- | ------------------------------ |
 | **`options`** | <code>{ path: string; }</code> |
 
-**Returns:** <code>Promise&lt;{ resultPath: string; }&gt;</code>
+**Returns:** <code>Promise&lt;{ result: string; }&gt;</code>
 
 --------------------
 
@@ -200,14 +200,14 @@ getRequestById(options: { path: string; }) => Promise<{ resultPath: string; }>
 ### processVideo(...)
 
 ```typescript
-processVideo(options: { path: string; }) => Promise<{ resultPath: string; }>
+processVideo(options: { path: string; }) => Promise<{ result: string; }>
 ```
 
 | Param         | Type                           |
 | ------------- | ------------------------------ |
 | **`options`** | <code>{ path: string; }</code> |
 
-**Returns:** <code>Promise&lt;{ resultPath: string; }&gt;</code>
+**Returns:** <code>Promise&lt;{ result: string; }&gt;</code>
 
 --------------------
 
@@ -215,14 +215,14 @@ processVideo(options: { path: string; }) => Promise<{ resultPath: string; }>
 ### cancelVideo(...)
 
 ```typescript
-cancelVideo(options: { path: string; }) => Promise<{ resultPath: string; }>
+cancelVideo(options: { path: string; }) => Promise<{ result: string; }>
 ```
 
 | Param         | Type                           |
 | ------------- | ------------------------------ |
 | **`options`** | <code>{ path: string; }</code> |
 
-**Returns:** <code>Promise&lt;{ resultPath: string; }&gt;</code>
+**Returns:** <code>Promise&lt;{ result: string; }&gt;</code>
 
 --------------------
 

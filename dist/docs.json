@@ -151,7 +151,7 @@
       },
       {
         "name": "getResultPath",
-        "signature": "(options: { path: string; }) => Promise<{ resultPath: string; }>",
+        "signature": "(options: { path: string; }) => Promise<{ result: string; }>",
         "parameters": [
           {
             "name": "options",
@@ -159,7 +159,7 @@
             "type": "{ path: string; }"
           }
         ],
-        "returns": "Promise<{ resultPath: string; }>",
+        "returns": "Promise<{ result: string; }>",
         "tags": [],
         "docs": "",
         "complexTypes": [],
@@ -167,7 +167,7 @@
       },
       {
         "name": "getRequestById",
-        "signature": "(options: { path: string; }) => Promise<{ resultPath: string; }>",
+        "signature": "(options: { path: string; }) => Promise<{ result: string; }>",
         "parameters": [
           {
             "name": "options",
@@ -175,7 +175,7 @@
             "type": "{ path: string; }"
           }
         ],
-        "returns": "Promise<{ resultPath: string; }>",
+        "returns": "Promise<{ result: string; }>",
         "tags": [],
         "docs": "",
         "complexTypes": [],
@@ -183,7 +183,7 @@
       },
       {
         "name": "processVideo",
-        "signature": "(options: { path: string; }) => Promise<{ resultPath: string; }>",
+        "signature": "(options: { path: string; }) => Promise<{ result: string; }>",
         "parameters": [
           {
             "name": "options",
@@ -191,7 +191,7 @@
             "type": "{ path: string; }"
           }
         ],
-        "returns": "Promise<{ resultPath: string; }>",
+        "returns": "Promise<{ result: string; }>",
         "tags": [],
         "docs": "",
         "complexTypes": [],
@@ -199,7 +199,7 @@
       },
       {
         "name": "cancelVideo",
-        "signature": "(options: { path: string; }) => Promise<{ resultPath: string; }>",
+        "signature": "(options: { path: string; }) => Promise<{ result: string; }>",
         "parameters": [
           {
             "name": "options",
@@ -207,7 +207,7 @@
             "type": "{ path: string; }"
           }
         ],
-        "returns": "Promise<{ resultPath: string; }>",
+        "returns": "Promise<{ result: string; }>",
         "tags": [],
         "docs": "",
         "complexTypes": [],

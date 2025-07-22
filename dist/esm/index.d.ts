@@ -11,7 +11,7 @@ export declare function editVideo(videoUri: string, resultPath: string): Promise
     result: object;
 }>;
 export declare function getResultPath(videoPath: string): Promise<{
-    resultPath: string;
+    result: string;
 }>;
 export declare function generateThumbnail(videoPath: string, resultPath: string, position: number, width: number, height: number, precise: boolean): Promise<{
     result: object;
