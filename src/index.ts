@@ -148,9 +148,10 @@ export class MergeBuilder {
             throw new Error('❌ mergeVideos result is missing `id`.');
         }
 
-        console.log("✅ MergeBuilder build success. mergeData:", this.mergeData);
-
+        
         this.mergeData = response.result as BuilderResponse;;
+        console.log("✅ MergeBuilder build success. mergeData:", this.mergeData);
+        console.log("this :", this);
         return this;
     }
 
