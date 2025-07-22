@@ -304,9 +304,14 @@ export class EncodeBuilder {
                 config: JSON.stringify(config)
             });
 
+        console.log("📥 encodeVideo response:", response);
 
-        if (!response || !response.result) {
-            throw new Error("Build failed: No valid result from encodeVideo");
+        if (!response || typeof response !== 'object') {
+            throw new Error("Build failed: encodeVideo response is not an object");
+        }
+
+        if (!response.result || typeof response.result !== 'object') {
+            throw new Error("Build failed: response.result is not valid");
         }
 
         this.mergeData = response.result as BuilderResponse;
