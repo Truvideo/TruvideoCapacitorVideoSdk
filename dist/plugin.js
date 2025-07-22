@@ -84,11 +84,9 @@ var capacitorTruvideoSdkVideo = (function (exports, core) {
                 width: this.width,
                 framesRate: this.frameRate,
             };
-            console.log("📦 Calling mergeVideos with:", {
-                videoUris: this._filePath,
-                resultPath: this.resultPath,
-                config: JSON.stringify(config)
-            });
+            console.log("📦 Calling mergeVideos with:", JSON.stringify(config));
+            console.log("📦 Calling mergeVideos with:", this.resultPath);
+            console.log("📦 Calling mergeVideos with:", this._filePath);
             var response = await TruvideoSdkVideo.mergeVideos({
                 videoUris: this._filePath,
                 resultPath: this.resultPath,

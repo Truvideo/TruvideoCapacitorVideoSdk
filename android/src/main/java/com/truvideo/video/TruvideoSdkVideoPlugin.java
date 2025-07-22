@@ -100,6 +100,16 @@ public class TruvideoSdkVideoPlugin extends Plugin {
         return new Gson().toJson(map);
     }
 
+    public JSObject returnRequestAsJSObject(TruvideoSdkVideoRequest request) {
+    JSObject obj = new JSObject();
+    obj.put("id", request.getId());
+    obj.put("createdAt", request.getCreatedAt().toString());
+    obj.put("status", request.getStatus().name());
+    obj.put("type", request.getType().name());
+    obj.put("updatedAt", request.getUpdatedAt().toString());
+    return obj;
+}
+
     @PluginMethod
     public void encodeVideo(PluginCall call) {
         // Encodes a video with optional configuration
@@ -232,7 +242,7 @@ public class TruvideoSdkVideoPlugin extends Plugin {
             @Override
             public void onComplete(TruvideoSdkVideoRequest truvideoSdkVideoRequest) {
                 JSObject ret = new JSObject();
-                ret.put("result", returnRequest(truvideoSdkVideoRequest));
+                ret.put("result", returnRequestAsJSObject(truvideoSdkVideoRequest));
                 call.resolve(ret);
             }
 
