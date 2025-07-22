@@ -82,11 +82,25 @@ export class MergeBuilder {
             width: this.width,
             framesRate: this.frameRate,
         };
+        console.log("📦 Calling mergeVideos with:", {
+            videoUris: this._filePath,
+            resultPath: this.resultPath,
+            config: JSON.stringify(config)
+        });
         var response = await TruvideoSdkVideo.mergeVideos({
             videoUris: this._filePath,
             resultPath: this.resultPath,
             config: JSON.stringify(config)
         });
+        console.log("📥 mergeVideos response:", response);
+        if (!response || !response.result) {
+            throw new Error('❌ mergeVideos did not return a valid result.');
+        }
+        const parsed = typeof response.result === 'string' ? JSON.parse(response.result) : response.result;
+        if (!parsed.id) {
+            throw new Error('❌ mergeVideos result is missing `id`.');
+        }
+        console.log("✅ MergeBuilder build success. mergeData:", this.mergeData);
         this.mergeData = response.result;
         ;
         return this;
@@ -99,7 +113,12 @@ export class MergeBuilder {
         var response = await TruvideoSdkVideo.processVideo({
             path: this.mergeData.id
         });
+        console.log("📥 processVideo response:", response);
+        if (!response || !response.resultPath) {
+            throw new Error('❌ processVideo did not return a valid resultPath.');
+        }
         this.mergeData = JSON.parse(response.resultPath);
+        console.log("✅ process complete. Processed Data:", this.mergeData);
         return this.mergeData;
     }
     async cancel() {
@@ -108,6 +127,9 @@ export class MergeBuilder {
             throw new Error('Call build() and ensure it succeeds before calling cancel().');
         }
         var response = await TruvideoSdkVideo.cancelVideo({ path: this.mergeData.id });
+        if (!response || !response.resultPath) {
+            throw new Error('❌ cancelVideo did not return a valid resultPath.');
+        }
         this.mergeData = JSON.parse(response.resultPath);
         return this.mergeData;
     }
