@@ -50,14 +50,14 @@ echo(options: { value: string; }) => Promise<{ value: string; }>
 ### concatVideos(...)
 
 ```typescript
-concatVideos(options: { videoUris: string; resultPath: string; }) => Promise<{ result: string; }>
+concatVideos(options: { videoUris: string; resultPath: string; }) => Promise<{ result: object; }>
 ```
 
 | Param         | Type                                                    |
 | ------------- | ------------------------------------------------------- |
 | **`options`** | <code>{ videoUris: string; resultPath: string; }</code> |
 
-**Returns:** <code>Promise&lt;{ result: string; }&gt;</code>
+**Returns:** <code>Promise&lt;{ result: object; }&gt;</code>
 
 --------------------
 
@@ -65,14 +65,14 @@ concatVideos(options: { videoUris: string; resultPath: string; }) => Promise<{ r
 ### encodeVideo(...)
 
 ```typescript
-encodeVideo(options: { videoUri: string; resultPath: string; config: string; }) => Promise<{ result: string; }>
+encodeVideo(options: { videoUri: string; resultPath: string; config: string; }) => Promise<{ result: object; }>
 ```
 
 | Param         | Type                                                                   |
 | ------------- | ---------------------------------------------------------------------- |
 | **`options`** | <code>{ videoUri: string; resultPath: string; config: string; }</code> |
 
-**Returns:** <code>Promise&lt;{ result: string; }&gt;</code>
+**Returns:** <code>Promise&lt;{ result: object; }&gt;</code>
 
 --------------------
 

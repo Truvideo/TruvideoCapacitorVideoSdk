@@ -23,7 +23,7 @@
       },
       {
         "name": "concatVideos",
-        "signature": "(options: { videoUris: string; resultPath: string; }) => Promise<{ result: string; }>",
+        "signature": "(options: { videoUris: string; resultPath: string; }) => Promise<{ result: object; }>",
         "parameters": [
           {
             "name": "options",
@@ -31,7 +31,7 @@
             "type": "{ videoUris: string; resultPath: string; }"
           }
         ],
-        "returns": "Promise<{ result: string; }>",
+        "returns": "Promise<{ result: object; }>",
         "tags": [],
         "docs": "",
         "complexTypes": [],
@@ -39,7 +39,7 @@
       },
       {
         "name": "encodeVideo",
-        "signature": "(options: { videoUri: string; resultPath: string; config: string; }) => Promise<{ result: string; }>",
+        "signature": "(options: { videoUri: string; resultPath: string; config: string; }) => Promise<{ result: object; }>",
         "parameters": [
           {
             "name": "options",
@@ -47,7 +47,7 @@
             "type": "{ videoUri: string; resultPath: string; config: string; }"
           }
         ],
-        "returns": "Promise<{ result: string; }>",
+        "returns": "Promise<{ result: object; }>",
         "tags": [],
         "docs": "",
         "complexTypes": [],

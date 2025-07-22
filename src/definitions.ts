@@ -6,13 +6,13 @@ export interface TruvideoSdkVideoPlugin {
     concatVideos(options: {
         videoUris: string;
         resultPath: string
-    }): Promise<{ result: string }>;
+    }): Promise<{ result: object }>;
 
     encodeVideo(options: {
         videoUri: string;
         resultPath: string;
         config: string;
-    }): Promise<{ result: string }>;
+    }): Promise<{ result: object }>;
 
     getVideoInfo(options: {
         videoPath: string;
