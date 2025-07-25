@@ -23,7 +23,8 @@ public class TruvideoSdkVideoPlugin: CAPPlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "cleanNoise", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "getVideoInfo", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "getResultPath", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "editVideo", returnType: CAPPluginReturnPromise)
+        CAPPluginMethod(name: "editVideo", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "processVideo", returnType: CAPPluginReturnPromise)
     ]
     
     @objc func echo(_ call: CAPPluginCall) {
@@ -102,7 +103,7 @@ public class TruvideoSdkVideoPlugin: CAPPlugin, CAPBridgedPlugin {
             let resultPath = outputFolderURL.appendingPathComponent(path).path
             
             call.resolve([
-                "resultPath": resultPath
+                "result": resultPath
             ])
         } catch {
             call.reject("no_path", "Failed to get document directory path", error)
@@ -248,8 +249,8 @@ public class TruvideoSdkVideoPlugin: CAPPlugin, CAPBridgedPlugin {
                             return
                         }
                         
-                        if let frameRateStr = configuration["framesRate"] as? String,
-                           let videoCodec = configuration["videoCodec"] {
+                        if let frameRateStr = configuration["framesRate"] as? String
+                            {
                             let inputPath: TruvideoSdkVideoFile = .init(url: videoUrl)
                             let outputPath: TruvideoSdkVideoFileDescriptor = .files(fileName: outputUrl.lastPathComponent)
                             let builder = TruvideoSdkVideo.EncodingBuilder(input: inputPath, output: outputPath)
@@ -326,9 +327,9 @@ public class TruvideoSdkVideoPlugin: CAPPlugin, CAPBridgedPlugin {
         }
     }
     
-    @objc func process(_ call: CAPPluginCall) {
+    @objc func processVideo(_ call: CAPPluginCall) {
         // Checks if multiple videos can be concatenated
-        guard let id = call.getString("id") else {
+        guard let id = call.getString("path") else {
             call.reject("INVALID_INPUT", "id is required")
             return
         }
@@ -339,13 +340,15 @@ public class TruvideoSdkVideoPlugin: CAPPlugin, CAPBridgedPlugin {
             publisher
                 .sink { videoRequest in
                     // Handle each emitted TruvideoSdkVideoRequest
-                    do {
-                      try await videoRequest.process()
-                        call.resolve(["result": self.sendRequest(videoRequest: videoRequest)])
-                    }catch{
-                        call.reject("TruvideoSdkExceptions","\(error.localizedDescription)",nil)
+                    Task {
+                        do {
+                            try await videoRequest.process()
+                            call.resolve(["result": self.sendRequest(videoRequest: videoRequest)])
+                        }catch{
+                            call.reject("TruvideoSdkExceptions","\(error.localizedDescription)",nil)
+                        }
+                        cancellables.removeAll()
                     }
-                  cancellables.removeAll()
                 }
                 .store(in: &cancellables)
 
@@ -419,8 +422,7 @@ public class TruvideoSdkVideoPlugin: CAPPlugin, CAPBridgedPlugin {
                             return
                         }
                         // Parse frameRate and videoCodec as strings
-                        guard let frameRateStr = configuration["framesRate"] as? String,
-                              let videoCodec = configuration["videoCodec"] as? String else {
+                        guard let frameRateStr = configuration["framesRate"] as? String else {
                             print("framesRate or videoCodec are not valid strings or missing")
                             return
                         }
