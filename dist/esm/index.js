@@ -91,9 +91,9 @@ export class MergeBuilder {
             config: JSON.stringify(config),
         });
         console.log("📥 [Build] mergeVideos API Raw Response:", response);
-        if (!(response === null || response === void 0 ? void 0 : response.result) || typeof response.result !== 'object') {
-            throw new Error('❌ mergeVideos result is not a valid object.');
-        }
+        // if (!response?.result || typeof response.result !== 'object') {
+        //     throw new Error('❌ mergeVideos result is not a valid object.');
+        // }
         // this.mergeData = response.result as BuilderResponse;
         try {
             this.mergeData = response.result;
