@@ -94,7 +94,14 @@ export class MergeBuilder {
         if (!(response === null || response === void 0 ? void 0 : response.result) || typeof response.result !== 'object') {
             throw new Error('❌ mergeVideos result is not a valid object.');
         }
-        this.mergeData = response.result;
+        // this.mergeData = response.result as BuilderResponse;
+        try {
+            this.mergeData = response.result;
+        }
+        catch (e) {
+            console.error("❌ [Process] Failed to parse resultPath JSON:", response.result, e);
+            throw new Error('❌ Failed to parse resultPath from MergeBuilder.');
+        }
         if (!this.mergeData.id) {
             throw new Error('❌ mergeVideos result is missing `id`.');
         }
