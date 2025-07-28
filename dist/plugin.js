@@ -84,9 +84,6 @@ var capacitorTruvideoSdkVideo = (function (exports, core) {
                 width: this.width,
                 framesRate: this.frameRate,
             };
-            console.log("📦 [Build] Merging Videos with Config:", config);
-            console.log("📦 [Build] Result Path:", this.resultPath);
-            console.log("📦 [Build] Video URIs:", this._filePath);
             const response = await TruvideoSdkVideo.mergeVideos({
                 videoUris: this._filePath,
                 resultPath: this.resultPath,
@@ -118,19 +115,32 @@ var capacitorTruvideoSdkVideo = (function (exports, core) {
             const response = await TruvideoSdkVideo.processVideo({
                 path: this.mergeData.id
             });
-            if (!response || !response.result) {
-                console.error("❌ [Process] Invalid response from processVideo. Missing resultPath.");
-                throw new Error('❌ processVideo did not return a valid resultPath.');
-            }
+            // if (!response || !response.result) {
+            //     console.error("❌ [Process] Invalid response from processVideo. Missing resultPath.");
+            //     throw new Error('❌ processVideo did not return a valid resultPath.');
+            // }
+            // try {
+            //     this.mergeData = JSON.parse(response.result) as BuilderResponse;
+            // } catch (e) {
+            //     console.error("❌ [Process] Failed to parse resultPath JSON:", response.result, e);
+            //     throw new Error('❌ Failed to parse resultPath from processVideo.');
+            // }
+            // console.log("✅ [Process] Video processing complete. Processed Data:", this.mergeData);
             try {
-                this.mergeData = JSON.parse(response.result);
+                const result = typeof response.result === 'string'
+                    ? JSON.parse(response.result)
+                    : response.result;
+                if (!result || typeof result !== 'object') {
+                    throw new Error('❌ processVideo returned invalid result.');
+                }
+                this.mergeData = result;
+                console.log("✅ [Process] Video processing complete. Processed Data:", this.mergeData);
+                return this.mergeData;
             }
             catch (e) {
                 console.error("❌ [Process] Failed to parse resultPath JSON:", response.result, e);
                 throw new Error('❌ Failed to parse resultPath from processVideo.');
             }
-            console.log("✅ [Process] Video processing complete. Processed Data:", this.mergeData);
-            return this.mergeData;
         }
         async cancel() {
             var _a;
@@ -138,11 +148,20 @@ var capacitorTruvideoSdkVideo = (function (exports, core) {
                 throw new Error('Call build() and ensure it succeeds before calling cancel().');
             }
             var response = await TruvideoSdkVideo.cancelVideo({ path: this.mergeData.id });
-            if (!response || !response.result) {
-                throw new Error('❌ cancelVideo did not return a valid resultPath.');
+            try {
+                const result = typeof response.result === 'string'
+                    ? JSON.parse(response.result)
+                    : response.result;
+                if (!result || typeof result !== 'object') {
+                    throw new Error('❌ cancelVideo returned invalid result.');
+                }
+                this.mergeData = result;
+                return this.mergeData;
             }
-            this.mergeData = JSON.parse(response.result);
-            return this.mergeData;
+            catch (e) {
+                console.error("❌ [Cancel] Failed to parse resultPath JSON:", response.result, e);
+                throw new Error('❌ Failed to parse resultPath from cancelVideo.');
+            }
         }
     }
     class ConcatBuilder {
@@ -161,13 +180,7 @@ var capacitorTruvideoSdkVideo = (function (exports, core) {
                 videoUris: this._filePath,
                 resultPath: this.resultPath
             });
-            if (!response || typeof response !== 'object') {
-                throw new Error("Build failed: concatVideos response is not an object");
-            }
-            if (!response.result || typeof response.result !== 'object') {
-                throw new Error("Build failed: response.result is not valid");
-            }
-            this.concatData = response.result;
+            this.concatData = parsePluginResponse(response);
             return this;
         }
         async process() {
@@ -178,13 +191,7 @@ var capacitorTruvideoSdkVideo = (function (exports, core) {
             const response = await TruvideoSdkVideo.processVideo({
                 path: this.concatData.id
             });
-            if (!response || typeof response !== 'object') {
-                throw new Error("Process failed: response is not an object");
-            }
-            if (!response.result || typeof response.result !== 'string') {
-                throw new Error("Process failed: response.result is not a valid string");
-            }
-            this.concatData = JSON.parse(response.result);
+            this.concatData = parsePluginResponse(response);
             return this.concatData;
         }
         async cancel() {
@@ -195,13 +202,7 @@ var capacitorTruvideoSdkVideo = (function (exports, core) {
             const response = await TruvideoSdkVideo.cancelVideo({
                 path: this.concatData.id
             });
-            if (!response || typeof response !== 'object') {
-                throw new Error("Cancel failed: response is not an object");
-            }
-            if (!response.result || typeof response.result !== 'string') {
-                throw new Error("Cancel failed: response.result is not a valid string");
-            }
-            this.concatData = JSON.parse(response.result);
+            this.concatData = parsePluginResponse(response);
             return this.concatData;
         }
     }
@@ -260,15 +261,7 @@ var capacitorTruvideoSdkVideo = (function (exports, core) {
                 resultPath: this.resultPath,
                 config: JSON.stringify(config)
             });
-            if (!response || typeof response !== 'object') {
-                console.error("❌ Invalid response from encodeVideo:", response);
-                throw new Error("Build failed: encodeVideo response is not an object");
-            }
-            if (!response.result || typeof response.result !== 'object') {
-                console.error("❌ Invalid result in encodeVideo response:", response.result);
-                throw new Error("Build failed: response.result is not valid");
-            }
-            this.mergeData = response.result;
+            this.mergeData = parsePluginResponse(response);
             return this;
         }
         // Process the video after build
@@ -278,7 +271,7 @@ var capacitorTruvideoSdkVideo = (function (exports, core) {
                 throw new Error('Call build() and ensure it succeeds before calling process().');
             }
             const response = await TruvideoSdkVideo.processVideo({ path: this.mergeData.id });
-            this.mergeData = JSON.parse(response.result);
+            this.mergeData = parsePluginResponse(response);
             return this.mergeData;
         }
         // Cancel the video encoding
@@ -288,8 +281,22 @@ var capacitorTruvideoSdkVideo = (function (exports, core) {
                 throw new Error('Call build() and ensure it succeeds before calling cancel().');
             }
             const response = await TruvideoSdkVideo.cancelVideo({ path: this.mergeData.id });
-            this.mergeData = JSON.parse(response.result);
+            this.mergeData = parsePluginResponse(response);
             return this.mergeData;
+        }
+    }
+    function parsePluginResponse(response) {
+        if (!response || typeof response !== 'object') {
+            throw new Error("Plugin response is not an object");
+        }
+        if (!response.result || typeof response.result !== 'string') {
+            throw new Error("Plugin response.result is not a valid string");
+        }
+        try {
+            return JSON.parse(response.result);
+        }
+        catch (e) {
+            throw new Error("Failed to parse plugin response.result: " + e);
         }
     }
 
