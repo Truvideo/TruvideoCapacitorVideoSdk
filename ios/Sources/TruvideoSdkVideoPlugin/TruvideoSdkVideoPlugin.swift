@@ -24,7 +24,8 @@ public class TruvideoSdkVideoPlugin: CAPPlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "getVideoInfo", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "getResultPath", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "editVideo", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "processVideo", returnType: CAPPluginReturnPromise)
+        CAPPluginMethod(name: "processVideo", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "cancelVideo", returnType: CAPPluginReturnPromise)
     ]
     
     @objc func echo(_ call: CAPPluginCall) {
@@ -297,7 +298,7 @@ public class TruvideoSdkVideoPlugin: CAPPlugin, CAPBridgedPlugin {
         }
     }
     
-    @objc func cancel(_ call: CAPPluginCall) {
+    @objc func cancelVideo(_ call: CAPPluginCall) {
         // Checks if multiple videos can be concatenated
         guard let id = call.getString("id") else {
             call.reject("INVALID_INPUT", "id is required")

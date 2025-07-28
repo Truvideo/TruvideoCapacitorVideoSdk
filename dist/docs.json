@@ -183,7 +183,7 @@
       },
       {
         "name": "processVideo",
-        "signature": "(options: { path: string; }) => Promise<{ result: string; }>",
+        "signature": "(options: { path: string; }) => Promise<{ result: object; }>",
         "parameters": [
           {
             "name": "options",
@@ -191,7 +191,7 @@
             "type": "{ path: string; }"
           }
         ],
-        "returns": "Promise<{ result: string; }>",
+        "returns": "Promise<{ result: object; }>",
         "tags": [],
         "docs": "",
         "complexTypes": [],
@@ -199,7 +199,7 @@
       },
       {
         "name": "cancelVideo",
-        "signature": "(options: { path: string; }) => Promise<{ result: string; }>",
+        "signature": "(options: { path: string; }) => Promise<{ result: object; }>",
         "parameters": [
           {
             "name": "options",
@@ -207,7 +207,7 @@
             "type": "{ path: string; }"
           }
         ],
-        "returns": "Promise<{ result: string; }>",
+        "returns": "Promise<{ result: object; }>",
         "tags": [],
         "docs": "",
         "complexTypes": [],

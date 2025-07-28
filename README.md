@@ -200,14 +200,14 @@ getRequestById(options: { path: string; }) => Promise<{ result: string; }>
 ### processVideo(...)
 
 ```typescript
-processVideo(options: { path: string; }) => Promise<{ result: string; }>
+processVideo(options: { path: string; }) => Promise<{ result: object; }>
 ```
 
 | Param         | Type                           |
 | ------------- | ------------------------------ |
 | **`options`** | <code>{ path: string; }</code> |
 
-**Returns:** <code>Promise&lt;{ result: string; }&gt;</code>
+**Returns:** <code>Promise&lt;{ result: object; }&gt;</code>
 
 --------------------
 
@@ -215,14 +215,14 @@ processVideo(options: { path: string; }) => Promise<{ result: string; }>
 ### cancelVideo(...)
 
 ```typescript
-cancelVideo(options: { path: string; }) => Promise<{ result: string; }>
+cancelVideo(options: { path: string; }) => Promise<{ result: object; }>
 ```
 
 | Param         | Type                           |
 | ------------- | ------------------------------ |
 | **`options`** | <code>{ path: string; }</code> |
 
-**Returns:** <code>Promise&lt;{ result: string; }&gt;</code>
+**Returns:** <code>Promise&lt;{ result: object; }&gt;</code>
 
 --------------------
 

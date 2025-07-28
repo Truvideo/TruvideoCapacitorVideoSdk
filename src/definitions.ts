@@ -57,10 +57,10 @@ export interface TruvideoSdkVideoPlugin {
 
     processVideo(options: {
         path: string
-    }): Promise<{ result: string }>;
+    }): Promise<{ result: object }>;
 
     cancelVideo(options: {
         path: string
-    }): Promise<{ result: string }>;
+    }): Promise<{ result: object }>;
 
 }
