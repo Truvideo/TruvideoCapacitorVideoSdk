@@ -127,32 +127,23 @@ export class MergeBuilder {
 
         console.log("📥 [Build] mergeVideos API Raw Response:", response);
 
-        
-
-        // this.mergeData = response.result as BuilderResponse;
         try {
+            const result = typeof response.result === 'string'
+                ? JSON.parse(response.result)
+                : response.result;
 
-            if (!response?.result || typeof response.result !== 'object') {
-                throw new Error('❌ mergeVideos result is not a valid object.');
-            }
-            this.mergeData = response.result as BuilderResponse;
-        
-
-            if (!this.mergeData.id) {
-                throw new Error('❌ mergeVideos result is missing `id`.');
+            if (!result || typeof result !== 'object') {
+                throw new Error('❌ processVideo returned invalid result.');
             }
 
-            console.log("✅ [Build] MergeBuilder build success. MergeData:", this.mergeData);
-            console.log("🔁 [Build] Returning instance of MergeBuilder:", this);
-
+            this.mergeData = result as BuilderResponse;
+            console.log("✅ [Process] Video processing complete. Processed Data:", this.mergeData);
+            return this;
         } catch (e) {
             console.error("❌ [Process] Failed to parse resultPath JSON:", response.result, e);
-            throw new Error('❌ Failed to parse resultPath from MergeBuilder.');
+            throw new Error('❌ Failed to parse resultPath from processVideo.');
         }
-
-        return this;
     }
-
 
     async process(): Promise<BuilderResponse> {
         if (!this.mergeData?.id) {

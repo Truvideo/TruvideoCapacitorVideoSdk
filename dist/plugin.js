@@ -93,23 +93,21 @@ var capacitorTruvideoSdkVideo = (function (exports, core) {
                 config: JSON.stringify(config),
             });
             console.log("📥 [Build] mergeVideos API Raw Response:", response);
-            // this.mergeData = response.result as BuilderResponse;
             try {
-                if (!(response === null || response === void 0 ? void 0 : response.result) || typeof response.result !== 'object') {
-                    throw new Error('❌ mergeVideos result is not a valid object.');
+                const result = typeof response.result === 'string'
+                    ? JSON.parse(response.result)
+                    : response.result;
+                if (!result || typeof result !== 'object') {
+                    throw new Error('❌ processVideo returned invalid result.');
                 }
-                this.mergeData = response.result;
-                if (!this.mergeData.id) {
-                    throw new Error('❌ mergeVideos result is missing `id`.');
-                }
-                console.log("✅ [Build] MergeBuilder build success. MergeData:", this.mergeData);
-                console.log("🔁 [Build] Returning instance of MergeBuilder:", this);
+                this.mergeData = result;
+                console.log("✅ [Process] Video processing complete. Processed Data:", this.mergeData);
+                return this;
             }
             catch (e) {
                 console.error("❌ [Process] Failed to parse resultPath JSON:", response.result, e);
-                throw new Error('❌ Failed to parse resultPath from MergeBuilder.');
+                throw new Error('❌ Failed to parse resultPath from processVideo.');
             }
-            return this;
         }
         async process() {
             var _a;
