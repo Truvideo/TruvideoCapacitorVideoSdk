@@ -90,22 +90,8 @@ class MergeBuilder {
             resultPath: this.resultPath,
             config: JSON.stringify(config),
         });
-        console.log("📥 [Build] mergeVideos API Raw Response:", response);
-        try {
-            const result = typeof response.result === 'string'
-                ? JSON.parse(response.result)
-                : response.result;
-            if (!result || typeof result !== 'object') {
-                throw new Error('❌ processVideo returned invalid result.');
-            }
-            this.mergeData = result;
-            console.log("✅ [Process] Video processing complete. Processed Data:", this.mergeData);
-            return this;
-        }
-        catch (e) {
-            console.error("❌ [Process] Failed to parse resultPath JSON:", response.result, e);
-            throw new Error('❌ Failed to parse resultPath from processVideo.');
-        }
+        this.mergeData = parsePluginResponse(response);
+        return this;
     }
     async process() {
         var _a;
@@ -116,32 +102,8 @@ class MergeBuilder {
         const response = await TruvideoSdkVideo.processVideo({
             path: this.mergeData.id
         });
-        // if (!response || !response.result) {
-        //     console.error("❌ [Process] Invalid response from processVideo. Missing resultPath.");
-        //     throw new Error('❌ processVideo did not return a valid resultPath.');
-        // }
-        // try {
-        //     this.mergeData = JSON.parse(response.result) as BuilderResponse;
-        // } catch (e) {
-        //     console.error("❌ [Process] Failed to parse resultPath JSON:", response.result, e);
-        //     throw new Error('❌ Failed to parse resultPath from processVideo.');
-        // }
-        // console.log("✅ [Process] Video processing complete. Processed Data:", this.mergeData);
-        try {
-            const result = typeof response.result === 'string'
-                ? JSON.parse(response.result)
-                : response.result;
-            if (!result || typeof result !== 'object') {
-                throw new Error('❌ processVideo returned invalid result.');
-            }
-            this.mergeData = result;
-            console.log("✅ [Process] Video processing complete. Processed Data:", this.mergeData);
-            return this.mergeData;
-        }
-        catch (e) {
-            console.error("❌ [Process] Failed to parse resultPath JSON:", response.result, e);
-            throw new Error('❌ Failed to parse resultPath from processVideo.');
-        }
+        this.mergeData = parsePluginResponse(response);
+        return this.mergeData;
     }
     async cancel() {
         var _a;
@@ -149,20 +111,8 @@ class MergeBuilder {
             throw new Error('Call build() and ensure it succeeds before calling cancel().');
         }
         var response = await TruvideoSdkVideo.cancelVideo({ path: this.mergeData.id });
-        try {
-            const result = typeof response.result === 'string'
-                ? JSON.parse(response.result)
-                : response.result;
-            if (!result || typeof result !== 'object') {
-                throw new Error('❌ cancelVideo returned invalid result.');
-            }
-            this.mergeData = result;
-            return this.mergeData;
-        }
-        catch (e) {
-            console.error("❌ [Cancel] Failed to parse resultPath JSON:", response.result, e);
-            throw new Error('❌ Failed to parse resultPath from cancelVideo.');
-        }
+        this.mergeData = parsePluginResponse(response);
+        return this.mergeData;
     }
 }
 class ConcatBuilder {

@@ -28,6 +28,8 @@ public class TruvideoSdkVideoPlugin: CAPPlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "cancelVideo", returnType: CAPPluginReturnPromise)
     ]
     
+    var cancellables = Set<AnyCancellable>()
+    
     @objc func echo(_ call: CAPPluginCall) {
         // Simply returns the same value received
         let value = call.getString("value") ?? ""
@@ -160,10 +162,7 @@ public class TruvideoSdkVideoPlugin: CAPPlugin, CAPBridgedPlugin {
                 
                 let builder = TruvideoSdkVideo.ConcatBuilder(input: inputUrl, output: outputPath)
                 let result = try builder.build()
-                
                 call.resolve(["result": sendRequest(videoRequest: result)])
-                    //print("Successfully concatenated", response.videoURL.absoluteString)
-                
             }catch{
                 call.reject("TruvideoSdkEceptionn",error.localizedDescription)
             }
@@ -171,35 +170,35 @@ public class TruvideoSdkVideoPlugin: CAPPlugin, CAPBridgedPlugin {
     }
     
     func sendRequest(videoRequest : TruvideoSdkVideo.TruvideoSdkVideoRequest) -> String{
-      let dateFormatter = ISO8601DateFormatter()
-      var type = videoRequest.type
-      var typeString = ""
-      if(type == .merge){
-        typeString = "merge"
-      }else if(type == .concat){
-        typeString = "concat"
-      }else {
-        typeString = "encode"
-      }
-      let mainResponse: [String: String] = [
-        "id": videoRequest.id.uuidString,
-        "createdAt" : dateFormatter.string(from: videoRequest.createdAt),
-        "status" : "\(videoRequest.status.rawValue)",
-        "type" : typeString,
-        "updatedAt" : dateFormatter.string(from: videoRequest.updatedAt)
-      ]
-      print("Received request:", videoRequest)
-      do{
-        let jsonData = try JSONSerialization.data(withJSONObject: mainResponse, options: [])
-        if let jsonString = String(data: jsonData, encoding: .utf8) {
-          print("json",jsonString)
-          return jsonString
-        }else{
-          return "{}"
+        let dateFormatter = ISO8601DateFormatter()
+        var type = videoRequest.type
+        var typeString = ""
+        if(type == .merge){
+            typeString = "merge"
+        }else if(type == .concat){
+            typeString = "concat"
+        }else {
+            typeString = "encode"
         }
-      }catch{
-        return "{}"
-      }
+        let mainResponse: [String: String] = [
+            "id": videoRequest.id.uuidString,
+            "createdAt" : dateFormatter.string(from: videoRequest.createdAt),
+            "status" : "\(videoRequest.status.rawValue)",
+            "type" : typeString,
+            "updatedAt" : dateFormatter.string(from: videoRequest.updatedAt)
+        ]
+        print("Received request:", videoRequest)
+        do{
+            let jsonData = try JSONSerialization.data(withJSONObject: mainResponse, options: [])
+            if let jsonString = String(data: jsonData, encoding: .utf8) {
+                print("json",jsonString)
+                return jsonString
+            }else{
+                return "{}"
+            }
+        }catch{
+            return "{}"
+        }
     }
     
     @objc func encodeVideo(_ call: CAPPluginCall) {
@@ -251,7 +250,7 @@ public class TruvideoSdkVideoPlugin: CAPPlugin, CAPBridgedPlugin {
                         }
                         
                         if let frameRateStr = configuration["framesRate"] as? String
-                            {
+                        {
                             let inputPath: TruvideoSdkVideoFile = .init(url: videoUrl)
                             let outputPath: TruvideoSdkVideoFileDescriptor = .files(fileName: outputUrl.lastPathComponent)
                             let builder = TruvideoSdkVideo.EncodingBuilder(input: inputPath, output: outputPath)
@@ -262,7 +261,7 @@ public class TruvideoSdkVideoPlugin: CAPPlugin, CAPBridgedPlugin {
                             
                             let result = builder.build()
                             call.resolve(["result": sendRequest(videoRequest: result)])
-                                //await print("Successfully encoded", output?.videoURL.absoluteString ?? "")
+                            //await print("Successfully encoded", output?.videoURL.absoluteString ?? "")
                         } else {
                             print("Invalid JSON format")
                             call.reject("json_error", "Invalid JSON format", nil)
@@ -300,27 +299,27 @@ public class TruvideoSdkVideoPlugin: CAPPlugin, CAPBridgedPlugin {
     
     @objc func cancelVideo(_ call: CAPPluginCall) {
         // Checks if multiple videos can be concatenated
-        guard let id = call.getString("id") else {
+        guard let id = call.getString("path") else {
             call.reject("INVALID_INPUT", "id is required")
             return
         }
         var cancellables = Set<AnyCancellable>()
         do {
-          let publisher = try TruvideoSdkVideo.streamRequest(withId: UUID(uuidString :id) ?? UUID())
-          let dateFormatter = ISO8601DateFormatter()
+            let publisher = try TruvideoSdkVideo.streamRequest(withId: UUID(uuidString :id) ?? UUID())
+            let dateFormatter = ISO8601DateFormatter()
             publisher
                 .sink { videoRequest in
                     // Handle each emitted TruvideoSdkVideoRequest
                     do {
-                      try videoRequest.cancel()
+                        try videoRequest.cancel()
                         call.resolve(["result": self.sendRequest(videoRequest: videoRequest)])
                     }catch{
                         call.reject("TruvideoSdkExceptions","\(error.localizedDescription)",nil)
                     }
-                  cancellables.removeAll()
+                    cancellables.removeAll()
                 }
                 .store(in: &cancellables)
-
+            
         } catch {
             // Handle thrown error from streamRequest
             call.reject("json_error", "Error checking video compatibility", error)
@@ -329,32 +328,33 @@ public class TruvideoSdkVideoPlugin: CAPPlugin, CAPBridgedPlugin {
     }
     
     @objc func processVideo(_ call: CAPPluginCall) {
-        // Checks if multiple videos can be concatenated
         guard let id = call.getString("path") else {
             call.reject("INVALID_INPUT", "id is required")
             return
         }
-        var cancellables = Set<AnyCancellable>()
+        
         do {
-          let publisher = try TruvideoSdkVideo.streamRequest(withId: UUID(uuidString :id) ?? UUID())
-          let dateFormatter = ISO8601DateFormatter()
-            publisher
-                .sink { videoRequest in
-                    // Handle each emitted TruvideoSdkVideoRequest
+            try TruvideoSdkVideo.streamRequest(withId: UUID(uuidString: id) ?? UUID())
+                .first() // ✅ only take the first emitted value
+                .sink(receiveCompletion: { completion in
+                    if case .failure(let error) = completion {
+                        call.reject("STREAM_FAILED", error.localizedDescription)
+                    }
+                }, receiveValue: { videoRequest in
                     Task {
                         do {
-                            try await videoRequest.process()
+                            let result =  try await videoRequest.process()
                             call.resolve(["result": self.sendRequest(videoRequest: videoRequest)])
+                         //   call.resolve(["result": result.videoURL.absoluteString])
+                            self.cancellables.removeAll()
                         }catch{
                             call.reject("TruvideoSdkExceptions","\(error.localizedDescription)",nil)
                         }
-                        cancellables.removeAll()
                     }
-                }
+                })
                 .store(in: &cancellables)
-
+            
         } catch {
-            // Handle thrown error from streamRequest
             call.reject("json_error", "Error checking video compatibility", error)
             print("Failed to create publisher:", error)
         }
@@ -368,17 +368,17 @@ public class TruvideoSdkVideoPlugin: CAPPlugin, CAPBridgedPlugin {
         }
         var cancellables = Set<AnyCancellable>()
         do {
-          let publisher = try TruvideoSdkVideo.streamRequest(withId: UUID(uuidString :id) ?? UUID())
-          let dateFormatter = ISO8601DateFormatter()
+            let publisher = try TruvideoSdkVideo.streamRequest(withId: UUID(uuidString :id) ?? UUID())
+            let dateFormatter = ISO8601DateFormatter()
             publisher
                 .sink { videoRequest in
                     // Handle each emitted TruvideoSdkVideoRequest
-                  var jsonString = self.sendRequest(videoRequest : videoRequest)
+                    var jsonString = self.sendRequest(videoRequest : videoRequest)
                     call.resolve(["result": self.sendRequest(videoRequest: videoRequest)])
-                  cancellables.removeAll()
+                    cancellables.removeAll()
                 }
                 .store(in: &cancellables)
-
+            
         } catch {
             // Handle thrown error from streamRequest
             call.reject("json_error", "Error checking video compatibility", error)
@@ -387,68 +387,68 @@ public class TruvideoSdkVideoPlugin: CAPPlugin, CAPBridgedPlugin {
     }
     
     @objc func mergeVideos(_ call: CAPPluginCall) {
-            guard let videoUris = call.getString("videoUris") else {
-                call.reject("INVALID_INPUT", "filePath is required")
+        guard let videoUris = call.getString("videoUris") else {
+            call.reject("INVALID_INPUT", "filePath is required")
+            return
+        }
+        guard let resultPath = call.getString("resultPath") else {
+            call.reject("INVALID_INPUT", "resultPath is required")
+            return
+        }
+        guard let config = call.getString("config") else {
+            call.reject("INVALID_INPUT", "config is required")
+            return
+        }
+        var urlArray = createUrlArray(videos: filePaths(from: videoUris))
+        Task {
+            let videoUrl = self.createUrlArray(videos: filePaths(from: videoUris))
+            let outputUrl = self.convertStringToURL(resultPath)
+            guard let data = config.data(using: .utf8) else {
+                print("Invalid JSON string")
+                call.reject("json_error", "Invalid JSON string", nil)
                 return
             }
-            guard let resultPath = call.getString("resultPath") else {
-                call.reject("INVALID_INPUT", "resultPath is required")
-                return
-            }
-            guard let config = call.getString("config") else {
-                call.reject("INVALID_INPUT", "config is required")
-                return
-            }
-            var urlArray = createUrlArray(videos: filePaths(from: videoUris))
-            Task {
-                let videoUrl = self.createUrlArray(videos: filePaths(from: videoUris))
-                let outputUrl = self.convertStringToURL(resultPath)
-                guard let data = config.data(using: .utf8) else {
-                    print("Invalid JSON string")
-                    call.reject("json_error", "Invalid JSON string", nil)
-                    return
-                }
-                do {
-                    if let configuration = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-                        print(configuration)
-                        
-                        // Parse width and height from strings
-                        guard let widthStr = configuration["width"] as? String, let width = CGFloat(Double(widthStr) ?? 0) as? CGFloat else {
-                            print("Width is not a valid string or missing")
-                            return
-                        }
-                        
-                        guard let heightStr = configuration["height"] as? String, let height = CGFloat(Double(heightStr) ?? 0) as? CGFloat else {
-                            print("Height is not a valid string or missing")
-                            return
-                        }
-                        // Parse frameRate and videoCodec as strings
-                        guard let frameRateStr = configuration["framesRate"] as? String else {
-                            print("framesRate or videoCodec are not valid strings or missing")
-                            return
-                        }
-                        var inputUrl : [TruvideoSdkVideoFile] = []
-                        for url in videoUrl {
-                            inputUrl.append(.init(url: url))
-                        }
-                        let outputPath :TruvideoSdkVideoFileDescriptor = .files(fileName:  outputUrl.lastPathComponent)
-                        let builder = TruvideoSdkVideo.MergeBuilder(input: inputUrl, output: outputPath)
-                        builder.width = width
-                        builder.height = height
-                        builder.framesRate = frameRate(frameRateStr)
-                        let result = try builder.build()
-                        call.resolve(["result": sendRequest(videoRequest: result)])
-                    } else {
-                        print("Invalid JSON format")
-                        call.reject("json_error", "Invalid JSON format", nil)
+            do {
+                if let configuration = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                    print(configuration)
+                    
+                    // Parse width and height from strings
+                    guard let widthStr = configuration["width"] as? String, let width = CGFloat(Double(widthStr) ?? 0) as? CGFloat else {
+                        print("Width is not a valid string or missing")
+                        return
                     }
-                } catch {
-                    print("\(error.localizedDescription)")
-                    call.reject("TruvideoSdkException", "\(error.localizedDescription)", error)
+                    
+                    guard let heightStr = configuration["height"] as? String, let height = CGFloat(Double(heightStr) ?? 0) as? CGFloat else {
+                        print("Height is not a valid string or missing")
+                        return
+                    }
+                    // Parse frameRate and videoCodec as strings
+                    guard let frameRateStr = configuration["framesRate"] as? String else {
+                        print("framesRate or videoCodec are not valid strings or missing")
+                        return
+                    }
+                    var inputUrl : [TruvideoSdkVideoFile] = []
+                    for url in videoUrl {
+                        inputUrl.append(.init(url: url))
+                    }
+                    let outputPath :TruvideoSdkVideoFileDescriptor = .files(fileName:  outputUrl.lastPathComponent)
+                    let builder = TruvideoSdkVideo.MergeBuilder(input: inputUrl, output: outputPath)
+                    builder.width = width
+                    builder.height = height
+                    builder.framesRate = frameRate(frameRateStr)
+                    let result = try builder.build()
+                    call.resolve(["result": sendRequest(videoRequest: result)])
+                } else {
+                    print("Invalid JSON format")
+                    call.reject("json_error", "Invalid JSON format", nil)
                 }
+            } catch {
+                print("\(error.localizedDescription)")
+                call.reject("merge exceptions", "\(error.localizedDescription)", error)
             }
         }
-
+    }
+    
     
     func frameRate(_ frameRateStr: String) -> TruvideoSdkVideo.TruvideoSdkVideoFrameRate {
         return switch frameRateStr {
@@ -536,41 +536,41 @@ public class TruvideoSdkVideoPlugin: CAPPlugin, CAPBridgedPlugin {
                 let videoInfo = try await TruvideoSdkVideo.getVideoInformation(input: inputPath)
                 
                 let dictionaryResult : [String : Any] = [
-                            "path": videoInfo.path,
-                            "size": videoInfo.size,
-                            "durationMillis": videoInfo.durationMillis,
-                            "format": videoInfo.format,
-                            "videos": videoInfo.videos.map { video in
-                                return [
-                                    "index": video.index,
-                                    "width": video.width,
-                                    "height": video.height,
-                                    "rotatedWidth": video.rotatedWidth,
-                                    "rotatedHeight": video.rotatedHeight,
-                                    "codec": video.codec,
-                                    "codecTag": video.codecTag,
-                                    "pixelFormat": video.pixelFormat,
-                                    "bitRate": video.bitRate,
-                                    "frameRate": video.frameRate,
-                                    "rotation": video.rotation,
-                                    "durationMillis": video.durationMillis
-                                ] as [String: Any]
-                            },
-                            "audios": videoInfo.audios.map { audio in
-                              return [
-                                "index": audio.index,
-                                "codec": audio.codec,
-                                "codecTag": audio.codecTag,
-                                "sampleFormat": audio.sampleFormat,
-                                "bitRate": audio.bitRate,
-                                "sampleRate": audio.sampleRate,
-                                "channels": audio.channels,
-                                "channelLayout": audio.channelLayout,
-                                "durationMillis": audio.durationMillis
-                              ] as [String: Any]
-                            }
-                          ]
-                    
+                    "path": videoInfo.path,
+                    "size": videoInfo.size,
+                    "durationMillis": videoInfo.durationMillis,
+                    "format": videoInfo.format,
+                    "videos": videoInfo.videos.map { video in
+                        return [
+                            "index": video.index,
+                            "width": video.width,
+                            "height": video.height,
+                            "rotatedWidth": video.rotatedWidth,
+                            "rotatedHeight": video.rotatedHeight,
+                            "codec": video.codec,
+                            "codecTag": video.codecTag,
+                            "pixelFormat": video.pixelFormat,
+                            "bitRate": video.bitRate,
+                            "frameRate": video.frameRate,
+                            "rotation": video.rotation,
+                            "durationMillis": video.durationMillis
+                        ] as [String: Any]
+                    },
+                    "audios": videoInfo.audios.map { audio in
+                        return [
+                            "index": audio.index,
+                            "codec": audio.codec,
+                            "codecTag": audio.codecTag,
+                            "sampleFormat": audio.sampleFormat,
+                            "bitRate": audio.bitRate,
+                            "sampleRate": audio.sampleRate,
+                            "channels": audio.channels,
+                            "channelLayout": audio.channelLayout,
+                            "durationMillis": audio.durationMillis
+                        ] as [String: Any]
+                    }
+                ]
+                
                 
                 print("Video info retrieved successfully.")
                 call.resolve(["result": dictionaryResult])
