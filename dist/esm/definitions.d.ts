@@ -43,14 +43,12 @@ export interface TruvideoSdkVideoPlugin {
     editVideo(options: {
         videoPath: string;
         resultPath: string;
-        config: string;
     }): Promise<{
         result: object;
     }>;
     generateThumbnail(options: {
         videoPath: string;
         resultPath: string;
-        config: string;
         position: number;
         width: number;
         height: number;
@@ -61,6 +59,21 @@ export interface TruvideoSdkVideoPlugin {
     getResultPath(options: {
         path: string;
     }): Promise<{
-        resultPath: string;
+        result: string;
+    }>;
+    getRequestById(options: {
+        path: string;
+    }): Promise<{
+        result: string;
+    }>;
+    processVideo(options: {
+        path: string;
+    }): Promise<{
+        result: object;
+    }>;
+    cancelVideo(options: {
+        path: string;
+    }): Promise<{
+        result: object;
     }>;
 }
