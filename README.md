@@ -24,6 +24,7 @@ npx cap sync
 * [`generateThumbnail(...)`](#generatethumbnail)
 * [`getResultPath(...)`](#getresultpath)
 * [`getRequestById(...)`](#getrequestbyid)
+* [`getAllRequest(...)`](#getallrequest)
 * [`processVideo(...)`](#processvideo)
 * [`cancelVideo(...)`](#cancelvideo)
 
@@ -185,12 +186,27 @@ getResultPath(options: { path: string; }) => Promise<{ result: string; }>
 ### getRequestById(...)
 
 ```typescript
-getRequestById(options: { path: string; }) => Promise<{ result: string; }>
+getRequestById(options: { id: string; }) => Promise<{ result: string; }>
 ```
 
-| Param         | Type                           |
-| ------------- | ------------------------------ |
-| **`options`** | <code>{ path: string; }</code> |
+| Param         | Type                         |
+| ------------- | ---------------------------- |
+| **`options`** | <code>{ id: string; }</code> |
+
+**Returns:** <code>Promise&lt;{ result: string; }&gt;</code>
+
+--------------------
+
+
+### getAllRequest(...)
+
+```typescript
+getAllRequest(options: { status: string; }) => Promise<{ result: string; }>
+```
+
+| Param         | Type                             |
+| ------------- | -------------------------------- |
+| **`options`** | <code>{ status: string; }</code> |
 
 **Returns:** <code>Promise&lt;{ result: string; }&gt;</code>
 

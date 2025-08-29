@@ -6,6 +6,14 @@ export function getVideoInfo(videoPath) {
 export function compareVideos(videoPath) {
     return TruvideoSdkVideo.compareVideos({ videoUris: videoPath });
 }
+export async function getRequestById(id) {
+    var response = await TruvideoSdkVideo.getRequestById({ id: id });
+    return parsePluginResponse(response);
+}
+export async function getAllRequest(status) {
+    var response = await TruvideoSdkVideo.getAllRequest({ status: status });
+    return parsePluginResponse(response);
+}
 export function cleanNoise(videoUri, resultPath) {
     return TruvideoSdkVideo.cleanNoise({ videoPath: videoUri, resultPath: resultPath });
 }

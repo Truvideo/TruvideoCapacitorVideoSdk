@@ -19,6 +19,7 @@ import com.truvideo.sdk.video.model.TruvideoSdkVideoFileDescriptor;
 import com.truvideo.sdk.video.model.TruvideoSdkVideoFrameRate;
 import com.truvideo.sdk.video.model.TruvideoSdkVideoInformation;
 import com.truvideo.sdk.video.model.TruvideoSdkVideoRequest;
+import com.truvideo.sdk.video.model.TruvideoSdkVideoRequestStatus;
 import com.truvideo.sdk.video.video_request_builder.TruvideoSdkVideoConcatBuilder;
 import com.truvideo.sdk.video.video_request_builder.TruvideoSdkVideoEncodeBuilder;
 import com.truvideo.sdk.video.video_request_builder.TruvideoSdkVideoMergeBuilder;
@@ -32,6 +33,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import kotlin.Unit;
 import kotlinx.serialization.json.JsonArray;
@@ -93,19 +95,35 @@ public class TruvideoSdkVideoPlugin extends Plugin {
         Map<String, Object> map = new HashMap<>();
         map.put("id", request.getId());
         map.put("createdAt", request.getCreatedAt());
-        map.put("status", request.getStatus().name());
-        map.put("type", request.getType().name());
+        map.put("status", request.getStatus().name().toLowerCase());
+        map.put("type", request.getType().name().toLowerCase());
         map.put("updatedAt", request.getUpdatedAt());
 
         return new Gson().toJson(map);
+    }
+
+    public String returnRequests(List<TruvideoSdkVideoRequest> requests) {
+        List<Map<String, Object>> mapList = new ArrayList<>();
+
+        for(TruvideoSdkVideoRequest request : requests){
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", request.getId());
+            map.put("createdAt", request.getCreatedAt());
+            map.put("status", request.getStatus().name().toLowerCase());
+            map.put("type", request.getType().name().toLowerCase());
+            map.put("updatedAt", request.getUpdatedAt());
+            mapList.add(map);
+        }
+
+        return new Gson().toJson(mapList);
     }
 
     public JSObject returnRequestAsJSObject(TruvideoSdkVideoRequest request) {
     JSObject obj = new JSObject();
     obj.put("id", request.getId());
     obj.put("createdAt", request.getCreatedAt().toString());
-    obj.put("status", request.getStatus().name());
-    obj.put("type", request.getType().name());
+    obj.put("status", request.getStatus().name().toLowerCase());
+    obj.put("type", request.getType().name().toLowerCase());
     obj.put("updatedAt", request.getUpdatedAt().toString());
     return obj;
 }
@@ -255,7 +273,7 @@ public class TruvideoSdkVideoPlugin extends Plugin {
 
     @PluginMethod
     public void getRequestById(PluginCall call) {
-        String requestId = call.getString("path");
+        String requestId = call.getString("id");
         if(requestId == null){
             return;
         }
@@ -266,6 +284,39 @@ public class TruvideoSdkVideoPlugin extends Plugin {
                 ret.put("result", returnRequest(truvideoSdkVideoRequest));
                 call.resolve(ret);
             }
+
+            @Override
+            public void onError(@NonNull TruvideoSdkException e) {
+                call.reject(e.getMessage(), e);
+            }
+        });
+    }
+
+    @PluginMethod
+    public void getAllRequest(PluginCall call) {
+        String status = call.getString("status");
+        TruvideoSdkVideoRequestStatus statusEnum;
+        if(Objects.equals(status, "CANCELED")){
+            statusEnum = TruvideoSdkVideoRequestStatus.CANCELED;
+        }else if (Objects.equals(status, "PROCESSING")){
+            statusEnum = TruvideoSdkVideoRequestStatus.PROCESSING;
+        }else if (Objects.equals(status, "COMPLETED")){
+            statusEnum = TruvideoSdkVideoRequestStatus.COMPLETED;
+        }else if (Objects.equals(status, "IDLE")){
+            statusEnum = TruvideoSdkVideoRequestStatus.IDLE;
+        }else if (Objects.equals(status, "ERROR")){
+            statusEnum = TruvideoSdkVideoRequestStatus.ERROR;
+        }else {
+            statusEnum = null;
+        }
+        TruvideoSdkVideo.getAllRequests(statusEnum, new TruvideoSdkVideoCallback<List<TruvideoSdkVideoRequest>>() {
+            @Override
+            public void onComplete(List<TruvideoSdkVideoRequest> truvideoSdkVideoRequest) {
+                JSObject ret = new JSObject();
+                ret.put("result", returnRequests(truvideoSdkVideoRequest));
+                call.resolve(ret);
+            }
+            
 
             @Override
             public void onError(@NonNull TruvideoSdkException e) {

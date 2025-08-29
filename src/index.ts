@@ -11,6 +11,16 @@ export function compareVideos(videoPath: string): Promise<{ result: object }> {
     return TruvideoSdkVideo.compareVideos({ videoUris: videoPath });
 }
 
+export async function getRequestById(id: string): Promise<BuilderResponse> {
+    var response =  await TruvideoSdkVideo.getRequestById({id : id});
+    return parsePluginResponse<BuilderResponse>(response);
+}
+
+export async function getAllRequest(status: string): Promise<BuilderResponse[]> {
+    var response =  await TruvideoSdkVideo.getAllRequest({status : status});
+    return parsePluginResponse<BuilderResponse[]>(response);
+}
+
 export function cleanNoise(
     videoUri: string,
     resultPath: string
@@ -61,6 +71,8 @@ export interface BuilderResponse {
     type: string;
     updatedAt: string;
 }
+
+
 
 export class MergeBuilder {
     private _filePath: string;

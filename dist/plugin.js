@@ -8,6 +8,14 @@ var capacitorTruvideoSdkVideo = (function (exports, core) {
     function compareVideos(videoPath) {
         return TruvideoSdkVideo.compareVideos({ videoUris: videoPath });
     }
+    async function getRequestById(id) {
+        var response = await TruvideoSdkVideo.getRequestById({ id: id });
+        return parsePluginResponse(response);
+    }
+    async function getAllRequest(status) {
+        var response = await TruvideoSdkVideo.getAllRequest({ status: status });
+        return parsePluginResponse(response);
+    }
     function cleanNoise(videoUri, resultPath) {
         return TruvideoSdkVideo.cleanNoise({ videoPath: videoUri, resultPath: resultPath });
     }
@@ -257,6 +265,8 @@ var capacitorTruvideoSdkVideo = (function (exports, core) {
     exports.compareVideos = compareVideos;
     exports.editVideo = editVideo;
     exports.generateThumbnail = generateThumbnail;
+    exports.getAllRequest = getAllRequest;
+    exports.getRequestById = getRequestById;
     exports.getResultPath = getResultPath;
     exports.getVideoInfo = getVideoInfo;
 

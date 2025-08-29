@@ -169,6 +169,32 @@ public class TruvideoSdkVideoPlugin: CAPPlugin, CAPBridgedPlugin {
         }
     }
     
+    
+    func sendRequests(videoRequests: [TruvideoSdkVideo.TruvideoSdkVideoRequest]) -> String {
+          var responseArray: [[String: Any]] = []
+
+          for request in videoRequests {
+              let jsonString = sendRequest(videoRequest: request)
+              if let data = jsonString.data(using: .utf8),
+                 let dict = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                  responseArray.append(dict)
+              }
+          }
+
+          do {
+              let jsonData = try JSONSerialization.data(withJSONObject: responseArray, options: [])
+              if let finalJsonString = String(data: jsonData, encoding: .utf8) {
+                  print("json array", finalJsonString)
+                  return finalJsonString
+              }
+          } catch {
+              print("Error serializing requests: \(error)")
+          }
+
+          return "[]"
+      }
+     
+    
     func sendRequest(videoRequest : TruvideoSdkVideo.TruvideoSdkVideoRequest) -> String{
         let dateFormatter = ISO8601DateFormatter()
         var type = videoRequest.type
@@ -384,6 +410,42 @@ public class TruvideoSdkVideoPlugin: CAPPlugin, CAPBridgedPlugin {
             call.reject("json_error", "Error checking video compatibility", error)
             print("Failed to create publisher:", error)
         }
+    }
+    
+    @objc func getAllRequest(_ call: CAPPluginCall) {
+        // Checks if multiple videos can be concatenated
+        guard let status = call.getString("status") else {
+            call.reject("INVALID_INPUT", "id is required")
+            return
+        }
+        var cancellables = Set<AnyCancellable>()
+        var statusData : TruvideoSdkVideoRequest.Status?
+            if (status == "IDLE"){
+              statusData = .idle
+            }else if(status == "CANCELED"){
+              statusData = .cancelled
+            }else if(status == "COMPLETED"){
+              statusData = .complete
+            }else if(status == "ERROR"){
+              statusData = .error
+            }else if(status == "PROCESSING"){
+              statusData = .processing
+            }else {
+              statusData = nil
+            }
+        
+        let publisher = TruvideoSdkVideo.streamRequests(withStatus: statusData)
+        let dateFormatter = ISO8601DateFormatter()
+        publisher
+            .sink { videoRequest in
+                // Handle each emitted TruvideoSdkVideoRequest
+                var jsonString = self.sendRequests(videoRequests : videoRequest)
+                call.resolve(["result": jsonString])
+                cancellables.removeAll()
+            }
+            .store(in: &cancellables)
+            
+        
     }
     
     @objc func mergeVideos(_ call: CAPPluginCall) {

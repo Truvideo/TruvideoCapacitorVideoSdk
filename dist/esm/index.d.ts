@@ -4,6 +4,8 @@ export declare function getVideoInfo(videoPath: string): Promise<{
 export declare function compareVideos(videoPath: string): Promise<{
     result: object;
 }>;
+export declare function getRequestById(id: string): Promise<BuilderResponse>;
+export declare function getAllRequest(status: string): Promise<BuilderResponse[]>;
 export declare function cleanNoise(videoUri: string, resultPath: string): Promise<{
     result: object;
 }>;
