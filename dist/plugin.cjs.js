@@ -3,11 +3,21 @@
 var core = require('@capacitor/core');
 
 const TruvideoSdkVideo = core.registerPlugin('TruvideoSdkVideo');
-function getVideoInfo(videoPath) {
-    return TruvideoSdkVideo.getVideoInfo({ videoPath });
+exports.VideoStatus = void 0;
+(function (VideoStatus) {
+    VideoStatus["processing"] = "processing";
+    VideoStatus["completed"] = "complete";
+    VideoStatus["idle"] = "idle";
+    VideoStatus["cancel"] = "cancelled";
+    VideoStatus["error"] = "error";
+})(exports.VideoStatus || (exports.VideoStatus = {}));
+async function getVideoInfo(videoPath) {
+    var response = await TruvideoSdkVideo.getVideoInfo({ videoPath });
+    return parsePluginResponse(response);
 }
-function compareVideos(videoPath) {
-    return TruvideoSdkVideo.compareVideos({ videoUris: videoPath });
+async function compareVideos(videoPath) {
+    var response = await TruvideoSdkVideo.compareVideos({ videoUris: videoPath });
+    return parsePluginResponse(response);
 }
 async function getRequestById(id) {
     var response = await TruvideoSdkVideo.getRequestById({ id: id });
