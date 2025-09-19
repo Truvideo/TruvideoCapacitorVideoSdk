@@ -345,7 +345,7 @@ public class TruvideoSdkVideoPlugin: CAPPlugin, CAPBridgedPlugin {
         var cancellables = Set<AnyCancellable>()
         do {
             let publisher = try TruvideoSdkVideo.streamRequest(withId: UUID(uuidString :id) ?? UUID())
-            let dateFormatter = ISO8601DateFormatter()
+            //let dateFormatter = ISO8601DateFormatter()
             publisher
                 .sink { videoRequest in
                     // Handle each emitted TruvideoSdkVideoRequest
@@ -408,11 +408,11 @@ public class TruvideoSdkVideoPlugin: CAPPlugin, CAPBridgedPlugin {
         var cancellables = Set<AnyCancellable>()
         do {
             let publisher = try TruvideoSdkVideo.streamRequest(withId: UUID(uuidString :id) ?? UUID())
-            let dateFormatter = ISO8601DateFormatter()
+            //let dateFormatter = ISO8601DateFormatter()
             publisher
                 .sink { videoRequest in
                     // Handle each emitted TruvideoSdkVideoRequest
-                    var jsonString = self.sendRequest(videoRequest : videoRequest)
+                    //var jsonString = self.sendRequest(videoRequest : videoRequest)
                     call.resolve(["result": self.sendRequest(videoRequest: videoRequest)])
                     cancellables.removeAll()
                 }
@@ -448,11 +448,11 @@ public class TruvideoSdkVideoPlugin: CAPPlugin, CAPBridgedPlugin {
             }
         
         let publisher = TruvideoSdkVideo.streamRequests(withStatus: statusData)
-        let dateFormatter = ISO8601DateFormatter()
+        //let dateFormatter = ISO8601DateFormatter()
         publisher
             .sink { videoRequest in
                 // Handle each emitted TruvideoSdkVideoRequest
-                var jsonString = self.sendRequests(videoRequests : videoRequest)
+                let jsonString = self.sendRequests(videoRequests : videoRequest)
                 call.resolve(["result": jsonString])
                 cancellables.removeAll()
             }
@@ -474,7 +474,7 @@ public class TruvideoSdkVideoPlugin: CAPPlugin, CAPBridgedPlugin {
             call.reject("INVALID_INPUT", "config is required")
             return
         }
-        var urlArray = createUrlArray(videos: filePaths(from: videoUris))
+        //var urlArray = createUrlArray(videos: filePaths(from: videoUris))
         Task {
             let videoUrl = self.createUrlArray(videos: filePaths(from: videoUris))
             let outputUrl = self.convertStringToURL(resultPath)
