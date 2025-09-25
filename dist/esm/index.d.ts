@@ -1,9 +1,47 @@
-export declare function getVideoInfo(videoPath: string): Promise<{
-    result: object;
-}>;
-export declare function compareVideos(videoPath: string): Promise<{
-    result: object;
-}>;
+export interface VideoTrack {
+    index: string;
+    width: string;
+    height: string;
+    rotatedWidth: string;
+    rotatedHeight: string;
+    codec: string;
+    codecTag: string;
+    pixelFormat: string;
+    bitRate: string;
+    frameRate: string;
+    rotation: string;
+    durationMillis: string;
+}
+export interface AudioTrack {
+    index: string;
+    bitRate: string;
+    sampleRate: string;
+    channels: string;
+    codec: string;
+    codecTag: string;
+    durationMillis: string;
+    channelLayout: string;
+    sampleFormat: string;
+}
+export interface MediaInfo {
+    path: string;
+    size: number;
+    durationMillis: number;
+    format: string;
+    videoTracks: VideoTrack[];
+    audioTracks: AudioTrack[];
+}
+export declare enum VideoStatus {
+    processing = "processing",
+    completed = "complete",
+    idle = "idle",
+    cancel = "cancelled",
+    error = "error"
+}
+export declare function getVideoInfo(videoPath: string): Promise<MediaInfo>;
+export declare function compareVideos(videoPath: string): Promise<boolean>;
+export declare function getRequestById(id: string): Promise<BuilderResponse>;
+export declare function getAllRequest(status: VideoStatus): Promise<BuilderResponse[]>;
 export declare function cleanNoise(videoUri: string, resultPath: string): Promise<{
     result: object;
 }>;
@@ -23,11 +61,16 @@ export declare enum FrameRate {
     fiftyFps = "fiftyFps",
     sixtyFps = "sixtyFps"
 }
+export interface BuilderType {
+    merge: 'merge';
+    concat: 'concat';
+    encode: 'encode';
+}
 export interface BuilderResponse {
     id: string;
     createdAt: string;
-    status: string;
-    type: string;
+    status: VideoStatus;
+    type: BuilderType;
     updatedAt: string;
 }
 export declare class MergeBuilder {
