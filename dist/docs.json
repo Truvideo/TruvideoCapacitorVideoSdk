@@ -167,12 +167,12 @@
       },
       {
         "name": "getRequestById",
-        "signature": "(options: { id: string; }) => Promise<{ result: string; }>",
+        "signature": "(options: { path: string; }) => Promise<{ result: string; }>",
         "parameters": [
           {
             "name": "options",
             "docs": "",
-            "type": "{ id: string; }"
+            "type": "{ path: string; }"
           }
         ],
         "returns": "Promise<{ result: string; }>",
@@ -180,22 +180,6 @@
         "docs": "",
         "complexTypes": [],
         "slug": "getrequestbyid"
-      },
-      {
-        "name": "getAllRequest",
-        "signature": "(options: { status: string; }) => Promise<{ result: string; }>",
-        "parameters": [
-          {
-            "name": "options",
-            "docs": "",
-            "type": "{ status: string; }"
-          }
-        ],
-        "returns": "Promise<{ result: string; }>",
-        "tags": [],
-        "docs": "",
-        "complexTypes": [],
-        "slug": "getallrequest"
       },
       {
         "name": "processVideo",
