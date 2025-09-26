@@ -4,70 +4,11 @@ import type { TruvideoSdkVideoPlugin } from './definitions';
 
 const TruvideoSdkVideo = registerPlugin<TruvideoSdkVideoPlugin>('TruvideoSdkVideo');
 
-// Define a class for the VideoTrack
-export interface VideoTrack {
-  index : string;
-  width : string;
-  height : string;
-  rotatedWidth : string;
-  rotatedHeight : string;
-  codec : string;
-  codecTag : string;
-  pixelFormat : string;
-  bitRate : string;
-  frameRate : string;
-  rotation : string;
-  durationMillis : string;
+export function getVideoInfo(videoPath: string): Promise<{ result: object }> {
+    return TruvideoSdkVideo.getVideoInfo({ videoPath });
 }
-
-// Define a class for the AudioTrack
-export interface AudioTrack {
-  index: string;
-  bitRate: string;
-  sampleRate: string;
-  channels: string;
-  codec: string;
-  codecTag: string;
-  durationMillis: string;
-  channelLayout: string;
-  sampleFormat: string;
-}
-
-// Define a class for the main response data
-export interface MediaInfo {
-  path : string;
-  size : number;
-  durationMillis : number;
-  format : string;
-  videoTracks : VideoTrack[];
-  audioTracks : AudioTrack[];
-}
-
-export enum VideoStatus {
-  processing = 'processing',
-  completed = 'complete',
-  idle = 'idle',
-  cancel = 'cancelled',
-  error = 'error',
-}
-
-export async function getVideoInfo(videoPath: string): Promise<MediaInfo> {
-    var response =  await TruvideoSdkVideo.getVideoInfo({ videoPath });
-    return parsePluginResponse<MediaInfo>(response);
-}
-export async function compareVideos(videoPath: string): Promise<boolean> {
-    var response =  await TruvideoSdkVideo.compareVideos({ videoUris: videoPath });
-    return parsePluginResponse<boolean>(response);
-}
-
-export async function getRequestById(id: string): Promise<BuilderResponse> {
-    var response =  await TruvideoSdkVideo.getRequestById({id : id});
-    return parsePluginResponse<BuilderResponse>(response);
-}
-
-export async function getAllRequest(status: VideoStatus): Promise<BuilderResponse[]> {
-    var response =  await TruvideoSdkVideo.getAllRequest({status : status});
-    return parsePluginResponse<BuilderResponse[]>(response);
+export function compareVideos(videoPath: string): Promise<{ result: object }> {
+    return TruvideoSdkVideo.compareVideos({ videoUris: videoPath });
 }
 
 export function cleanNoise(
@@ -112,21 +53,14 @@ export enum FrameRate {
     fiftyFps = 'fiftyFps',
     sixtyFps = 'sixtyFps',
 }
-export interface BuilderType{
-    merge: 'merge';
-    concat: 'concat';
-    encode: 'encode';  
-}
 
 export interface BuilderResponse {
     id: string;
     createdAt: string;
-    status: VideoStatus;
-    type: BuilderType;
+    status: string;
+    type: string;
     updatedAt: string;
 }
-
-
 
 export class MergeBuilder {
     private _filePath: string;

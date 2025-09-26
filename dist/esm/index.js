@@ -1,28 +1,10 @@
 import { registerPlugin } from '@capacitor/core';
 const TruvideoSdkVideo = registerPlugin('TruvideoSdkVideo');
-export var VideoStatus;
-(function (VideoStatus) {
-    VideoStatus["processing"] = "processing";
-    VideoStatus["completed"] = "complete";
-    VideoStatus["idle"] = "idle";
-    VideoStatus["cancel"] = "cancelled";
-    VideoStatus["error"] = "error";
-})(VideoStatus || (VideoStatus = {}));
-export async function getVideoInfo(videoPath) {
-    var response = await TruvideoSdkVideo.getVideoInfo({ videoPath });
-    return parsePluginResponse(response);
+export function getVideoInfo(videoPath) {
+    return TruvideoSdkVideo.getVideoInfo({ videoPath });
 }
-export async function compareVideos(videoPath) {
-    var response = await TruvideoSdkVideo.compareVideos({ videoUris: videoPath });
-    return parsePluginResponse(response);
-}
-export async function getRequestById(id) {
-    var response = await TruvideoSdkVideo.getRequestById({ id: id });
-    return parsePluginResponse(response);
-}
-export async function getAllRequest(status) {
-    var response = await TruvideoSdkVideo.getAllRequest({ status: status });
-    return parsePluginResponse(response);
+export function compareVideos(videoPath) {
+    return TruvideoSdkVideo.compareVideos({ videoUris: videoPath });
 }
 export function cleanNoise(videoUri, resultPath) {
     return TruvideoSdkVideo.cleanNoise({ videoPath: videoUri, resultPath: resultPath });

@@ -3,10 +3,19 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 48;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		045802E82E2A5DEB00F23B46 /* TruvideoSdkVideo in Frameworks */ = {isa = PBXBuildFile; productRef = 045802E72E2A5DEB00F23B46 /* TruvideoSdkVideo */; };
+		04B0C23A2D9BE87100457448 /* TruvideoSdkVideo in Frameworks */ = {isa = PBXBuildFile; productRef = 04B0C2392D9BE87100457448 /* TruvideoSdkVideo */; };
+		04B0C23D2D9BF0AF00457448 /* TruvideoSdkVideo in Frameworks */ = {isa = PBXBuildFile; productRef = 04B0C23C2D9BF0AF00457448 /* TruvideoSdkVideo */; };
+		04B0C2432D9BF20600457448 /* TruvideoSdkVideo in Frameworks */ = {isa = PBXBuildFile; productRef = 04B0C2422D9BF20600457448 /* TruvideoSdkVideo */; };
+		04B0C2642D9BFF1700457448 /* TruvideoSdk in Frameworks */ = {isa = PBXBuildFile; productRef = 04B0C2632D9BFF1700457448 /* TruvideoSdk */; };
+		04B0C2672D9BFF3500457448 /* TruvideoSdkCamera in Frameworks */ = {isa = PBXBuildFile; productRef = 04B0C2662D9BFF3500457448 /* TruvideoSdkCamera */; };
+		04B0C26D2D9BFFAE00457448 /* TruvideoSdkVideo in Frameworks */ = {isa = PBXBuildFile; productRef = 04B0C26C2D9BFFAE00457448 /* TruvideoSdkVideo */; };
+		04B0C2702D9C076200457448 /* TruvideoSdkCamera in Frameworks */ = {isa = PBXBuildFile; productRef = 04B0C26F2D9C076200457448 /* TruvideoSdkCamera */; };
+		04B0C2762D9C115700457448 /* TruvideoSdkVideo in Frameworks */ = {isa = PBXBuildFile; productRef = 04B0C2752D9C115700457448 /* TruvideoSdkVideo */; };
 		2FAD9763203C412B000D30F8 /* config.xml in Resources */ = {isa = PBXBuildFile; fileRef = 2FAD9762203C412B000D30F8 /* config.xml */; };
 		50379B232058CBB4000EE86E /* capacitor.config.json in Resources */ = {isa = PBXBuildFile; fileRef = 50379B222058CBB4000EE86E /* capacitor.config.json */; };
 		504EC3081FED79650016851F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 504EC3071FED79650016851F /* AppDelegate.swift */; };
@@ -14,7 +23,7 @@
 		504EC30F1FED79650016851F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 504EC30E1FED79650016851F /* Assets.xcassets */; };
 		504EC3121FED79650016851F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 504EC3101FED79650016851F /* LaunchScreen.storyboard */; };
 		50B271D11FEDC1A000F3C39B /* public in Resources */ = {isa = PBXBuildFile; fileRef = 50B271D01FEDC1A000F3C39B /* public */; };
-		DE0176C41072488618C708EE /* Pods_App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 75C42B3713C067D96A5A8112 /* Pods_App.framework */; };
+		A084ECDBA7D38E1E42DFC39D /* Pods_App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AF277DCFFFF123FFC6DF26C7 /* Pods_App.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,9 +36,9 @@
 		504EC3111FED79650016851F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		504EC3131FED79650016851F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		50B271D01FEDC1A000F3C39B /* public */ = {isa = PBXFileReference; lastKnownFileType = folder; path = public; sourceTree = "<group>"; };
-		75C42B3713C067D96A5A8112 /* Pods_App.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_App.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		7B8EB9F90BA1EAFA39CB709E /* Pods-App.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.release.xcconfig"; path = "Target Support Files/Pods-App/Pods-App.release.xcconfig"; sourceTree = "<group>"; };
-		CF3886AFC1DDBF29208CC98B /* Pods-App.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.debug.xcconfig"; path = "Target Support Files/Pods-App/Pods-App.debug.xcconfig"; sourceTree = "<group>"; };
+		AF277DCFFFF123FFC6DF26C7 /* Pods_App.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_App.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		AF51FD2D460BCFE21FA515B2 /* Pods-App.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.release.xcconfig"; path = "Pods/Target Support Files/Pods-App/Pods-App.release.xcconfig"; sourceTree = "<group>"; };
+		FC68EB0AF532CFC21C3344DD /* Pods-App.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.debug.xcconfig"; path = "Pods/Target Support Files/Pods-App/Pods-App.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,20 +46,37 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DE0176C41072488618C708EE /* Pods_App.framework in Frameworks */,
+				04B0C2672D9BFF3500457448 /* TruvideoSdkCamera in Frameworks */,
+				A084ECDBA7D38E1E42DFC39D /* Pods_App.framework in Frameworks */,
+				04B0C26D2D9BFFAE00457448 /* TruvideoSdkVideo in Frameworks */,
+				04B0C23D2D9BF0AF00457448 /* TruvideoSdkVideo in Frameworks */,
+				04B0C23A2D9BE87100457448 /* TruvideoSdkVideo in Frameworks */,
+				045802E82E2A5DEB00F23B46 /* TruvideoSdkVideo in Frameworks */,
+				04B0C2642D9BFF1700457448 /* TruvideoSdk in Frameworks */,
+				04B0C2702D9C076200457448 /* TruvideoSdkCamera in Frameworks */,
+				04B0C2762D9C115700457448 /* TruvideoSdkVideo in Frameworks */,
+				04B0C2432D9BF20600457448 /* TruvideoSdkVideo in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		27E2DDA53C4D2A4D1A88CE4A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				AF277DCFFFF123FFC6DF26C7 /* Pods_App.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		504EC2FB1FED79650016851F = {
 			isa = PBXGroup;
 			children = (
 				504EC3061FED79650016851F /* App */,
 				504EC3051FED79650016851F /* Products */,
-				598BD57BAE79752A7BEC3B45 /* Pods */,
-				B2DF618BD41BF4F3A0B9A82B /* Frameworks */,
+				7F8756D8B27F46E3366F6CEA /* Pods */,
+				27E2DDA53C4D2A4D1A88CE4A /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -77,22 +103,13 @@
 			path = App;
 			sourceTree = "<group>";
 		};
-		598BD57BAE79752A7BEC3B45 /* Pods */ = {
+		7F8756D8B27F46E3366F6CEA /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				CF3886AFC1DDBF29208CC98B /* Pods-App.debug.xcconfig */,
-				7B8EB9F90BA1EAFA39CB709E /* Pods-App.release.xcconfig */,
+				FC68EB0AF532CFC21C3344DD /* Pods-App.debug.xcconfig */,
+				AF51FD2D460BCFE21FA515B2 /* Pods-App.release.xcconfig */,
 			);
 			name = Pods;
-			path = Pods;
-			sourceTree = "<group>";
-		};
-		B2DF618BD41BF4F3A0B9A82B /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				75C42B3713C067D96A5A8112 /* Pods_App.framework */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -102,11 +119,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 504EC3161FED79650016851F /* Build configuration list for PBXNativeTarget "App" */;
 			buildPhases = (
-				A70BC65C65B03CE9DFAF1E8E /* [CP] Check Pods Manifest.lock */,
+				6634F4EFEBD30273BCE97C65 /* [CP] Check Pods Manifest.lock */,
 				504EC3001FED79650016851F /* Sources */,
 				504EC3011FED79650016851F /* Frameworks */,
 				504EC3021FED79650016851F /* Resources */,
-				615400F121FB6149ED5A9C57 /* [CP] Embed Pods Frameworks */,
+				9592DBEFFC6D2A0C8D5DEB22 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -142,6 +159,9 @@
 				Base,
 			);
 			mainGroup = 504EC2FB1FED79650016851F;
+			packageReferences = (
+				045802E62E2A5DEB00F23B46 /* XCRemoteSwiftPackageReference "truvideo-sdk-ios-video" */,
+			);
 			productRefGroup = 504EC3051FED79650016851F /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -168,7 +188,25 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		615400F121FB6149ED5A9C57 /* [CP] Embed Pods Frameworks */ = {
+		6634F4EFEBD30273BCE97C65 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-App-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		9592DBEFFC6D2A0C8D5DEB22 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -181,28 +219,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-App/Pods-App-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		A70BC65C65B03CE9DFAF1E8E /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-App-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -340,14 +356,15 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
 		504EC3171FED79650016851F /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CF3886AFC1DDBF29208CC98B /* Pods-App.debug.xcconfig */;
+			baseConfigurationReference = FC68EB0AF532CFC21C3344DD /* Pods-App.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -355,7 +372,10 @@
 				DEVELOPMENT_TEAM = AKRSR3D9R9;
 				INFOPLIST_FILE = App/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				MARKETING_VERSION = 1.0;
 				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" \"-DDEBUG\"";
 				PRODUCT_BUNDLE_IDENTIFIER = io.ionic.starter;
@@ -368,7 +388,7 @@
 		};
 		504EC3181FED79650016851F /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7B8EB9F90BA1EAFA39CB709E /* Pods-App.release.xcconfig */;
+			baseConfigurationReference = AF51FD2D460BCFE21FA515B2 /* Pods-App.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -376,7 +396,10 @@
 				DEVELOPMENT_TEAM = AKRSR3D9R9;
 				INFOPLIST_FILE = App/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = io.ionic.starter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -408,6 +431,129 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		045802E62E2A5DEB00F23B46 /* XCRemoteSwiftPackageReference "truvideo-sdk-ios-video" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Truvideo/truvideo-sdk-ios-video.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 76.4.2;
+			};
+		};
+		04B0C2382D9BE87100457448 /* XCRemoteSwiftPackageReference "truvideo-sdk-ios-video" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Truvideo/truvideo-sdk-ios-video.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 76.4.1;
+			};
+		};
+		04B0C23B2D9BF0AF00457448 /* XCRemoteSwiftPackageReference "truvideo-sdk-ios-video" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Truvideo/truvideo-sdk-ios-video.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 76.2.1;
+			};
+		};
+		04B0C2412D9BF20600457448 /* XCRemoteSwiftPackageReference "truvideo-sdk-ios-video" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Truvideo/truvideo-sdk-ios-video.git";
+			requirement = {
+				kind = exactVersion;
+				version = 76.2.1;
+			};
+		};
+		04B0C2622D9BFF1700457448 /* XCRemoteSwiftPackageReference "truvideo-sdk-ios-core" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Truvideo/truvideo-sdk-ios-core.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 76.2.1;
+			};
+		};
+		04B0C2652D9BFF3500457448 /* XCRemoteSwiftPackageReference "truvideo-sdk-ios-camera" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Truvideo/truvideo-sdk-ios-camera.git";
+			requirement = {
+				kind = exactVersion;
+				version = 76.2.1;
+			};
+		};
+		04B0C26B2D9BFFAE00457448 /* XCRemoteSwiftPackageReference "truvideo-sdk-ios-video" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Truvideo/truvideo-sdk-ios-video.git";
+			requirement = {
+				kind = exactVersion;
+				version = 73.1.1;
+			};
+		};
+		04B0C26E2D9C076200457448 /* XCRemoteSwiftPackageReference "truvideo-sdk-ios-camera" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Truvideo/truvideo-sdk-ios-camera.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 76.2.1;
+			};
+		};
+		04B0C2742D9C115700457448 /* XCRemoteSwiftPackageReference "truvideo-sdk-ios-video" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Truvideo/truvideo-sdk-ios-video.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 76.2.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		045802E72E2A5DEB00F23B46 /* TruvideoSdkVideo */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 045802E62E2A5DEB00F23B46 /* XCRemoteSwiftPackageReference "truvideo-sdk-ios-video" */;
+			productName = TruvideoSdkVideo;
+		};
+		04B0C2392D9BE87100457448 /* TruvideoSdkVideo */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 04B0C2382D9BE87100457448 /* XCRemoteSwiftPackageReference "truvideo-sdk-ios-video" */;
+			productName = TruvideoSdkVideo;
+		};
+		04B0C23C2D9BF0AF00457448 /* TruvideoSdkVideo */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 04B0C23B2D9BF0AF00457448 /* XCRemoteSwiftPackageReference "truvideo-sdk-ios-video" */;
+			productName = TruvideoSdkVideo;
+		};
+		04B0C2422D9BF20600457448 /* TruvideoSdkVideo */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 04B0C2412D9BF20600457448 /* XCRemoteSwiftPackageReference "truvideo-sdk-ios-video" */;
+			productName = TruvideoSdkVideo;
+		};
+		04B0C2632D9BFF1700457448 /* TruvideoSdk */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 04B0C2622D9BFF1700457448 /* XCRemoteSwiftPackageReference "truvideo-sdk-ios-core" */;
+			productName = TruvideoSdk;
+		};
+		04B0C2662D9BFF3500457448 /* TruvideoSdkCamera */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 04B0C2652D9BFF3500457448 /* XCRemoteSwiftPackageReference "truvideo-sdk-ios-camera" */;
+			productName = TruvideoSdkCamera;
+		};
+		04B0C26C2D9BFFAE00457448 /* TruvideoSdkVideo */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 04B0C26B2D9BFFAE00457448 /* XCRemoteSwiftPackageReference "truvideo-sdk-ios-video" */;
+			productName = TruvideoSdkVideo;
+		};
+		04B0C26F2D9C076200457448 /* TruvideoSdkCamera */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 04B0C26E2D9C076200457448 /* XCRemoteSwiftPackageReference "truvideo-sdk-ios-camera" */;
+			productName = TruvideoSdkCamera;
+		};
+		04B0C2752D9C115700457448 /* TruvideoSdkVideo */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 04B0C2742D9C115700457448 /* XCRemoteSwiftPackageReference "truvideo-sdk-ios-video" */;
+			productName = TruvideoSdkVideo;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 504EC2FC1FED79650016851F /* Project object */;
 }

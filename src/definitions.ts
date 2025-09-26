@@ -52,11 +52,7 @@ export interface TruvideoSdkVideoPlugin {
     }): Promise<{ result: string }>;
 
     getRequestById(options: {
-        id: string
-    }): Promise<{ result: string }>;
-
-    getAllRequest(options: {
-        status: string
+        path: string
     }): Promise<{ result: string }>;
 
     processVideo(options: {
