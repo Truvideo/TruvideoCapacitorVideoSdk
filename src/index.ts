@@ -53,12 +53,12 @@ export interface MediaInfo {
 const TruvideoSdkVideo = registerPlugin<TruvideoSdkVideoPlugin>('TruvideoSdkVideo');
 
 export async function getVideoInfo(videoPath: string): Promise<MediaInfo> {
-    let response = TruvideoSdkVideo.getVideoInfo({ videoPath });
-    return parsePluginResponse<MediaInfo>((await response).result);
+    let response = await TruvideoSdkVideo.getVideoInfo({ videoPath });
+    return parsePluginResponse<MediaInfo>(response);
 }
 export async function compareVideos(videoPath: string): Promise<Boolean> {
-    let response =  TruvideoSdkVideo.compareVideos({ videoUris: videoPath });
-    return parsePluginResponse<Boolean>((await response).result);
+    let response = await TruvideoSdkVideo.compareVideos({ videoUris: videoPath });
+    return parsePluginResponse<Boolean>(response);
 }
 
 export function cleanNoise(

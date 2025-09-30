@@ -9,12 +9,12 @@ export var VideoStatus;
 })(VideoStatus || (VideoStatus = {}));
 const TruvideoSdkVideo = registerPlugin('TruvideoSdkVideo');
 export async function getVideoInfo(videoPath) {
-    let response = TruvideoSdkVideo.getVideoInfo({ videoPath });
-    return parsePluginResponse((await response).result);
+    let response = await TruvideoSdkVideo.getVideoInfo({ videoPath });
+    return parsePluginResponse(response);
 }
 export async function compareVideos(videoPath) {
-    let response = TruvideoSdkVideo.compareVideos({ videoUris: videoPath });
-    return parsePluginResponse((await response).result);
+    let response = await TruvideoSdkVideo.compareVideos({ videoUris: videoPath });
+    return parsePluginResponse(response);
 }
 export function cleanNoise(videoUri, resultPath) {
     return TruvideoSdkVideo.cleanNoise({ videoPath: videoUri, resultPath: resultPath });
