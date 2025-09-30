@@ -54,11 +54,11 @@ const TruvideoSdkVideo = registerPlugin<TruvideoSdkVideoPlugin>('TruvideoSdkVide
 
 export async function getVideoInfo(videoPath: string): Promise<MediaInfo> {
     let response = TruvideoSdkVideo.getVideoInfo({ videoPath });
-    return parsePluginResponse<MediaInfo>(response);
+    return parsePluginResponse<MediaInfo>((await response).result);
 }
 export async function compareVideos(videoPath: string): Promise<Boolean> {
     let response =  TruvideoSdkVideo.compareVideos({ videoUris: videoPath });
-    return parsePluginResponse<Boolean>(response);
+    return parsePluginResponse<Boolean>((await response).result);
 }
 
 export function cleanNoise(

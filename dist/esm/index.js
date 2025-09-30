@@ -10,11 +10,11 @@ export var VideoStatus;
 const TruvideoSdkVideo = registerPlugin('TruvideoSdkVideo');
 export async function getVideoInfo(videoPath) {
     let response = TruvideoSdkVideo.getVideoInfo({ videoPath });
-    return parsePluginResponse(response);
+    return parsePluginResponse((await response).result);
 }
 export async function compareVideos(videoPath) {
     let response = TruvideoSdkVideo.compareVideos({ videoUris: videoPath });
-    return parsePluginResponse(response);
+    return parsePluginResponse((await response).result);
 }
 export function cleanNoise(videoUri, resultPath) {
     return TruvideoSdkVideo.cleanNoise({ videoPath: videoUri, resultPath: resultPath });

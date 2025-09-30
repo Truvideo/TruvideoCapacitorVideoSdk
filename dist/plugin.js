@@ -12,11 +12,11 @@ var capacitorTruvideoSdkVideo = (function (exports, core) {
     const TruvideoSdkVideo = core.registerPlugin('TruvideoSdkVideo');
     async function getVideoInfo(videoPath) {
         let response = TruvideoSdkVideo.getVideoInfo({ videoPath });
-        return parsePluginResponse(response);
+        return parsePluginResponse((await response).result);
     }
     async function compareVideos(videoPath) {
         let response = TruvideoSdkVideo.compareVideos({ videoUris: videoPath });
-        return parsePluginResponse(response);
+        return parsePluginResponse((await response).result);
     }
     function cleanNoise(videoUri, resultPath) {
         return TruvideoSdkVideo.cleanNoise({ videoPath: videoUri, resultPath: resultPath });
