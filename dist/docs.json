@@ -71,7 +71,7 @@
       },
       {
         "name": "compareVideos",
-        "signature": "(options: { videoUris: string; }) => Promise<{ result: object; }>",
+        "signature": "(options: { videoUris: string; }) => Promise<{ result: boolean; }>",
         "parameters": [
           {
             "name": "options",
@@ -79,7 +79,7 @@
             "type": "{ videoUris: string; }"
           }
         ],
-        "returns": "Promise<{ result: object; }>",
+        "returns": "Promise<{ result: boolean; }>",
         "tags": [],
         "docs": "",
         "complexTypes": [],

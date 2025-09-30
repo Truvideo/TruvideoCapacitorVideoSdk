@@ -20,7 +20,7 @@ export interface TruvideoSdkVideoPlugin {
 
     compareVideos(options: {
         videoUris: string;
-    }): Promise<{ result: object }>;
+    }): Promise<{ result: boolean }>;
 
     mergeVideos(options: {
         videoUris: string;

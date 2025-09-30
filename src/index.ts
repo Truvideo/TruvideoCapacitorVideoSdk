@@ -58,7 +58,7 @@ export async function getVideoInfo(videoPath: string): Promise<MediaInfo> {
 }
 export async function compareVideos(videoPath: string): Promise<Boolean> {
     let response = await TruvideoSdkVideo.compareVideos({ videoUris: videoPath });
-    return parsePluginResponse<Boolean>(response.result);
+    return response.result;
 }
 
 export function cleanNoise(
@@ -79,11 +79,15 @@ export function getResultPath(videoPath: string): Promise<{ result: string }> {
 }
 
 export async function getAllRequests(status: VideoStatus): Promise<BuilderResponse[]> {
-    return parsePluginResponse<BuilderResponse[]>(TruvideoSdkVideo.getAllRequests({ status : status }));
+    let response = await TruvideoSdkVideo.getAllRequests({ status : status });
+    return parsePluginResponse<BuilderResponse[]>(response);
+    //return parsePluginResponse<BuilderResponse[]>(TruvideoSdkVideo.getAllRequests({ status : status }));
 }
 
 export async function getRequestById(id: string): Promise<BuilderResponse> {
-    return parsePluginResponse<BuilderResponse>(TruvideoSdkVideo.getRequestById({ id : id }));
+    let response = await TruvideoSdkVideo.getRequestById({ id : id });
+    return parsePluginResponse<BuilderResponse>(response);
+    //return parsePluginResponse<BuilderResponse>(TruvideoSdkVideo.getRequestById({ id : id }));
 }
 
 export function generateThumbnail(

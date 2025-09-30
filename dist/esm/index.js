@@ -14,7 +14,7 @@ export async function getVideoInfo(videoPath) {
 }
 export async function compareVideos(videoPath) {
     let response = await TruvideoSdkVideo.compareVideos({ videoUris: videoPath });
-    return parsePluginResponse(response.result);
+    return response.result;
 }
 export function cleanNoise(videoUri, resultPath) {
     return TruvideoSdkVideo.cleanNoise({ videoPath: videoUri, resultPath: resultPath });
@@ -26,10 +26,14 @@ export function getResultPath(videoPath) {
     return TruvideoSdkVideo.getResultPath({ path: videoPath });
 }
 export async function getAllRequests(status) {
-    return parsePluginResponse(TruvideoSdkVideo.getAllRequests({ status: status }));
+    let response = await TruvideoSdkVideo.getAllRequests({ status: status });
+    return parsePluginResponse(response);
+    //return parsePluginResponse<BuilderResponse[]>(TruvideoSdkVideo.getAllRequests({ status : status }));
 }
 export async function getRequestById(id) {
-    return parsePluginResponse(TruvideoSdkVideo.getRequestById({ id: id }));
+    let response = await TruvideoSdkVideo.getRequestById({ id: id });
+    return parsePluginResponse(response);
+    //return parsePluginResponse<BuilderResponse>(TruvideoSdkVideo.getRequestById({ id : id }));
 }
 export function generateThumbnail(videoPath, resultPath, position, width, height, precise) {
     return TruvideoSdkVideo.generateThumbnail({

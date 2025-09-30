@@ -96,14 +96,14 @@ getVideoInfo(options: { videoPath: string; }) => Promise<{ result: object; }>
 ### compareVideos(...)
 
 ```typescript
-compareVideos(options: { videoUris: string; }) => Promise<{ result: object; }>
+compareVideos(options: { videoUris: string; }) => Promise<{ result: boolean; }>
 ```
 
 | Param         | Type                                |
 | ------------- | ----------------------------------- |
 | **`options`** | <code>{ videoUris: string; }</code> |
 
-**Returns:** <code>Promise&lt;{ result: object; }&gt;</code>
+**Returns:** <code>Promise&lt;{ result: boolean; }&gt;</code>
 
 --------------------
 

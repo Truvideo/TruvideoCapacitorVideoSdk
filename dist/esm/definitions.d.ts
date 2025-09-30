@@ -25,7 +25,7 @@ export interface TruvideoSdkVideoPlugin {
     compareVideos(options: {
         videoUris: string;
     }): Promise<{
-        result: object;
+        result: boolean;
     }>;
     mergeVideos(options: {
         videoUris: string;
