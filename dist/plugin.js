@@ -1,12 +1,22 @@
 var capacitorTruvideoSdkVideo = (function (exports, core) {
     'use strict';
 
+    exports.VideoStatus = void 0;
+    (function (VideoStatus) {
+        VideoStatus["processing"] = "processing";
+        VideoStatus["completed"] = "complete";
+        VideoStatus["idle"] = "idle";
+        VideoStatus["cancel"] = "cancelled";
+        VideoStatus["error"] = "error";
+    })(exports.VideoStatus || (exports.VideoStatus = {}));
     const TruvideoSdkVideo = core.registerPlugin('TruvideoSdkVideo');
-    function getVideoInfo(videoPath) {
-        return TruvideoSdkVideo.getVideoInfo({ videoPath });
+    async function getVideoInfo(videoPath) {
+        let response = TruvideoSdkVideo.getVideoInfo({ videoPath });
+        return parsePluginResponse(response);
     }
-    function compareVideos(videoPath) {
-        return TruvideoSdkVideo.compareVideos({ videoUris: videoPath });
+    async function compareVideos(videoPath) {
+        let response = TruvideoSdkVideo.compareVideos({ videoUris: videoPath });
+        return parsePluginResponse(response);
     }
     function cleanNoise(videoUri, resultPath) {
         return TruvideoSdkVideo.cleanNoise({ videoPath: videoUri, resultPath: resultPath });
@@ -16,6 +26,12 @@ var capacitorTruvideoSdkVideo = (function (exports, core) {
     }
     function getResultPath(videoPath) {
         return TruvideoSdkVideo.getResultPath({ path: videoPath });
+    }
+    async function getAllRequests(status) {
+        return parsePluginResponse(TruvideoSdkVideo.getAllRequests({ status: status }));
+    }
+    async function getRequestById(id) {
+        return parsePluginResponse(TruvideoSdkVideo.getRequestById({ id: id }));
     }
     function generateThumbnail(videoPath, resultPath, position, width, height, precise) {
         return TruvideoSdkVideo.generateThumbnail({
@@ -35,6 +51,12 @@ var capacitorTruvideoSdkVideo = (function (exports, core) {
         FrameRate["fiftyFps"] = "fiftyFps";
         FrameRate["sixtyFps"] = "sixtyFps";
     })(exports.FrameRate || (exports.FrameRate = {}));
+    exports.BuilderType = void 0;
+    (function (BuilderType) {
+        BuilderType["merge"] = "merge";
+        BuilderType["concat"] = "concat";
+        BuilderType["encode"] = "encode";
+    })(exports.BuilderType || (exports.BuilderType = {}));
     class MergeBuilder {
         constructor(filePaths, resultPath) {
             this.height = '';
@@ -257,6 +279,8 @@ var capacitorTruvideoSdkVideo = (function (exports, core) {
     exports.compareVideos = compareVideos;
     exports.editVideo = editVideo;
     exports.generateThumbnail = generateThumbnail;
+    exports.getAllRequests = getAllRequests;
+    exports.getRequestById = getRequestById;
     exports.getResultPath = getResultPath;
     exports.getVideoInfo = getVideoInfo;
 

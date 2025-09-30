@@ -61,8 +61,13 @@ export interface TruvideoSdkVideoPlugin {
     }): Promise<{
         result: string;
     }>;
+    getAllRequests(options: {
+        status: string;
+    }): Promise<{
+        result: string;
+    }>;
     getRequestById(options: {
-        path: string;
+        id: string;
     }): Promise<{
         result: string;
     }>;

@@ -1,10 +1,20 @@
 import { registerPlugin } from '@capacitor/core';
+export var VideoStatus;
+(function (VideoStatus) {
+    VideoStatus["processing"] = "processing";
+    VideoStatus["completed"] = "complete";
+    VideoStatus["idle"] = "idle";
+    VideoStatus["cancel"] = "cancelled";
+    VideoStatus["error"] = "error";
+})(VideoStatus || (VideoStatus = {}));
 const TruvideoSdkVideo = registerPlugin('TruvideoSdkVideo');
-export function getVideoInfo(videoPath) {
-    return TruvideoSdkVideo.getVideoInfo({ videoPath });
+export async function getVideoInfo(videoPath) {
+    let response = TruvideoSdkVideo.getVideoInfo({ videoPath });
+    return parsePluginResponse(response);
 }
-export function compareVideos(videoPath) {
-    return TruvideoSdkVideo.compareVideos({ videoUris: videoPath });
+export async function compareVideos(videoPath) {
+    let response = TruvideoSdkVideo.compareVideos({ videoUris: videoPath });
+    return parsePluginResponse(response);
 }
 export function cleanNoise(videoUri, resultPath) {
     return TruvideoSdkVideo.cleanNoise({ videoPath: videoUri, resultPath: resultPath });
@@ -14,6 +24,12 @@ export function editVideo(videoUri, resultPath) {
 }
 export function getResultPath(videoPath) {
     return TruvideoSdkVideo.getResultPath({ path: videoPath });
+}
+export async function getAllRequests(status) {
+    return parsePluginResponse(TruvideoSdkVideo.getAllRequests({ status: status }));
+}
+export async function getRequestById(id) {
+    return parsePluginResponse(TruvideoSdkVideo.getRequestById({ id: id }));
 }
 export function generateThumbnail(videoPath, resultPath, position, width, height, precise) {
     return TruvideoSdkVideo.generateThumbnail({
@@ -33,6 +49,12 @@ export var FrameRate;
     FrameRate["fiftyFps"] = "fiftyFps";
     FrameRate["sixtyFps"] = "sixtyFps";
 })(FrameRate || (FrameRate = {}));
+export var BuilderType;
+(function (BuilderType) {
+    BuilderType["merge"] = "merge";
+    BuilderType["concat"] = "concat";
+    BuilderType["encode"] = "encode";
+})(BuilderType || (BuilderType = {}));
 export class MergeBuilder {
     constructor(filePaths, resultPath) {
         this.height = '';
