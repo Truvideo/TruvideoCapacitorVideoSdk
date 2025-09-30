@@ -3,43 +3,62 @@ package com.truvideo.video;
 import static com.truvideo.sdk.video.TruvideoSdkVideo.TruvideoSdkVideo;
 
 import android.content.Intent;
-import android.util.Log;
+import android.os.Build;
 
 import androidx.annotation.NonNull;
-
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.truvideo.sdk.video.interfaces.TruvideoSdkVideoCallback;
 import com.truvideo.sdk.video.model.TruvideoSdkVideoFile;
 import com.truvideo.sdk.video.model.TruvideoSdkVideoFileDescriptor;
 import com.truvideo.sdk.video.model.TruvideoSdkVideoFrameRate;
 import com.truvideo.sdk.video.model.TruvideoSdkVideoInformation;
 import com.truvideo.sdk.video.model.TruvideoSdkVideoRequest;
+import com.truvideo.sdk.video.model.TruvideoSdkVideoRequestStatus;
 import com.truvideo.sdk.video.video_request_builder.TruvideoSdkVideoConcatBuilder;
 import com.truvideo.sdk.video.video_request_builder.TruvideoSdkVideoEncodeBuilder;
 import com.truvideo.sdk.video.video_request_builder.TruvideoSdkVideoMergeBuilder;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.File;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import kotlin.Unit;
-import kotlinx.serialization.json.JsonArray;
 import truvideo.sdk.common.exceptions.TruvideoSdkException;
 
 @CapacitorPlugin(name = "TruvideoSdkVideo")
 public class TruvideoSdkVideoPlugin extends Plugin {
 
+
+    @PluginMethod
+    public void getAllRequests(PluginCall call){
+
+        String status = call.getString("status");
+        TruvideoSdkVideoRequestStatus requestStatus = UtilsKt.getStatus(status);
+        TruvideoSdkVideo.getAllRequests(requestStatus, new TruvideoSdkVideoCallback<>(){
+            @Override
+            public void onComplete(List<TruvideoSdkVideoRequest> requests) {
+                JSObject ret = new JSObject();
+                ret.put("result", returnRequests(requests));
+                call.resolve(ret);
+            }
+
+            @Override
+            public void onError(@NonNull TruvideoSdkException e) {
+
+            }
+        });
+
+    }
     @PluginMethod
     public void echo(PluginCall call) {
         // Echoes back the received value
@@ -89,26 +108,52 @@ public class TruvideoSdkVideoPlugin extends Plugin {
         });
     }
 
+    public String returnRequests(List<TruvideoSdkVideoRequest> request){
+        JSONArray array = new JSONArray();
+        for(TruvideoSdkVideoRequest r : request){
+            String jsonString = returnRequest(r);
+            try{
+                array.put(new JSONObject(jsonString));
+            }catch (JSONException e){
+                //e.printStackTrace();
+            }
+        }
+        return array.toString();
+    }
     public String returnRequest(TruvideoSdkVideoRequest request) {
         Map<String, Object> map = new HashMap<>();
         map.put("id", request.getId());
-        map.put("createdAt", request.getCreatedAt());
-        map.put("status", request.getStatus().name());
-        map.put("type", request.getType().name());
-        map.put("updatedAt", request.getUpdatedAt());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            map.put("createdAt", DateTimeFormatter.ISO_INSTANT.format(request.getCreatedAt().toInstant()));
+            map.put("updateAt",DateTimeFormatter.ISO_INSTANT.format(request.getUpdatedAt().toInstant()));
+        }else {
+            map.put("createdAt", request.getCreatedAt());
+            map.put("updateAt",request.getUpdatedAt());
+        }
+        //map.put("createdAt", request.getCreatedAt());
+        map.put("status", UtilsKt.getStatus(request.getStatus()));
 
+        map.put("type", request.getType().name().toLowerCase());
+        //map.put("updatedAt", request.getUpdatedAt());
         return new Gson().toJson(map);
     }
 
     public JSObject returnRequestAsJSObject(TruvideoSdkVideoRequest request) {
-    JSObject obj = new JSObject();
-    obj.put("id", request.getId());
-    obj.put("createdAt", request.getCreatedAt().toString());
-    obj.put("status", request.getStatus().name());
-    obj.put("type", request.getType().name());
-    obj.put("updatedAt", request.getUpdatedAt().toString());
-    return obj;
-}
+        JSObject obj = new JSObject();
+        obj.put("id", request.getId());
+        //obj.put("createdAt", request.getCreatedAt().toString());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            obj.put("createdAt", DateTimeFormatter.ISO_INSTANT.format(request.getCreatedAt().toInstant()));
+            obj.put("updateAt",DateTimeFormatter.ISO_INSTANT.format(request.getUpdatedAt().toInstant()));
+        }else {
+            obj.put("createdAt", request.getCreatedAt());
+            obj.put("updateAt",request.getUpdatedAt());
+        }
+        obj.put("status", request.getStatus().name());
+        obj.put("type", request.getType().name());
+        //obj.put("updatedAt", request.getUpdatedAt().toString());
+        return obj;
+    }
 
     @PluginMethod
     public void encodeVideo(PluginCall call) {

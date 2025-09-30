@@ -169,6 +169,30 @@ public class TruvideoSdkVideoPlugin: CAPPlugin, CAPBridgedPlugin {
         }
     }
     
+    func sendRequests(videoRequests: [TruvideoSdkVideo.TruvideoSdkVideoRequest]) -> String {
+          var responseArray: [[String: Any]] = []
+
+          for request in videoRequests {
+              let jsonString = sendRequest(videoRequest: request)
+              if let data = jsonString.data(using: .utf8),
+                 let dict = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                  responseArray.append(dict)
+              }
+          }
+
+          do {
+              let jsonData = try JSONSerialization.data(withJSONObject: responseArray, options: [])
+              if let finalJsonString = String(data: jsonData, encoding: .utf8) {
+                  print("json array", finalJsonString)
+                  return finalJsonString
+              }
+          } catch {
+              print("Error serializing requests: \(error)")
+          }
+
+          return "[]"
+      }
+    
     func sendRequest(videoRequest : TruvideoSdkVideo.TruvideoSdkVideoRequest) -> String{
         let dateFormatter = ISO8601DateFormatter()
         var type = videoRequest.type
@@ -180,10 +204,18 @@ public class TruvideoSdkVideoPlugin: CAPPlugin, CAPBridgedPlugin {
         }else {
             typeString = "encode"
         }
+        var status : String =  switch videoRequest.status {
+              case .idle : "idle"
+              case .error: "error"
+              case .complete: "completed"
+              case .processing: "processing"
+              case .cancelled: "canceled"
+              default:""
+            }
         let mainResponse: [String: String] = [
             "id": videoRequest.id.uuidString,
             "createdAt" : dateFormatter.string(from: videoRequest.createdAt),
-            "status" : "\(videoRequest.status.rawValue)",
+            "status" : status,
             "type" : typeString,
             "updatedAt" : dateFormatter.string(from: videoRequest.updatedAt)
         ]
@@ -386,6 +418,42 @@ public class TruvideoSdkVideoPlugin: CAPPlugin, CAPBridgedPlugin {
         }
     }
     
+    @objc func getAllRequest(_ call: CAPPluginCall) {
+        // Checks if multiple videos can be concatenated
+        guard let status = call.getString("status") else {
+            call.reject("INVALID_INPUT", "id is required")
+            return
+        }
+        var cancellables = Set<AnyCancellable>()
+        var statusData : TruvideoSdkVideoRequest.Status?
+            if (status == "IDLE"){
+              statusData = .idle
+            }else if(status == "CANCELED"){
+              statusData = .cancelled
+            }else if(status == "COMPLETED"){
+              statusData = .complete
+            }else if(status == "ERROR"){
+              statusData = .error
+            }else if(status == "PROCESSING"){
+              statusData = .processing
+            }else {
+              statusData = nil
+            }
+        
+        let publisher = TruvideoSdkVideo.streamRequests(withStatus: statusData)
+        //let dateFormatter = ISO8601DateFormatter()
+        publisher
+            .sink { videoRequest in
+                // Handle each emitted TruvideoSdkVideoRequest
+                let jsonString = self.sendRequests(videoRequests : videoRequest)
+                call.resolve(["result": jsonString])
+                cancellables.removeAll()
+            }
+            .store(in: &cancellables)
+            
+        
+    }
+    
     @objc func mergeVideos(_ call: CAPPluginCall) {
         guard let videoUris = call.getString("videoUris") else {
             call.reject("INVALID_INPUT", "filePath is required")
@@ -540,7 +608,7 @@ public class TruvideoSdkVideoPlugin: CAPPlugin, CAPBridgedPlugin {
                     "size": videoInfo.size,
                     "durationMillis": videoInfo.durationMillis,
                     "format": videoInfo.format,
-                    "videos": videoInfo.videos.map { video in
+                    "videoTracks": videoInfo.videoTracks.map { video in
                         return [
                             "index": video.index,
                             "width": video.width,
@@ -556,7 +624,7 @@ public class TruvideoSdkVideoPlugin: CAPPlugin, CAPBridgedPlugin {
                             "durationMillis": video.durationMillis
                         ] as [String: Any]
                     },
-                    "audios": videoInfo.audios.map { audio in
+                    "audioTracks": videoInfo.audioTracks.map { audio in
                         return [
                             "index": audio.index,
                             "codec": audio.codec,
