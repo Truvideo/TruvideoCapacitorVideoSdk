@@ -14,7 +14,7 @@ export async function getVideoInfo(videoPath) {
 }
 export async function compareVideos(videoPath) {
     let response = await TruvideoSdkVideo.compareVideos({ videoUris: videoPath });
-    return parsePluginResponse(response);
+    return parsePluginResponse(response.result);
 }
 export function cleanNoise(videoUri, resultPath) {
     return TruvideoSdkVideo.cleanNoise({ videoPath: videoUri, resultPath: resultPath });

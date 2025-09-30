@@ -58,7 +58,7 @@ export async function getVideoInfo(videoPath: string): Promise<MediaInfo> {
 }
 export async function compareVideos(videoPath: string): Promise<Boolean> {
     let response = await TruvideoSdkVideo.compareVideos({ videoUris: videoPath });
-    return parsePluginResponse<Boolean>(response);
+    return parsePluginResponse<Boolean>(response.result);
 }
 
 export function cleanNoise(
