@@ -596,15 +596,15 @@ public class TruvideoSdkVideoPlugin: CAPPlugin, CAPBridgedPlugin {
             call.reject("INVALID_INPUT", "videoPath is required")
             return
         }
-        
         Task {
             do {
-                let fileURL = convertStringToURL(filePath)
-                let inputPath = TruvideoSdkVideoFile(url: fileURL)
-                let videoInfo = try await TruvideoSdkVideo.getVideoInformation(input: inputPath)
+                let urlArray: URL = convertStringToURL(filePath)
+                var inputUrl : TruvideoSdkVideoFile = .init(url: urlArray)
+                let videoInfo = try await TruvideoSdkVideo.getVideoInformation(input: inputUrl)
+                
                 
                 let dictionaryResult : [String : Any] = [
-                    "path": videoInfo.path,
+                    "path": convertStringToURL(videoInfo.path).path,
                     "size": videoInfo.size,
                     "durationMillis": videoInfo.durationMillis,
                     "format": videoInfo.format,
@@ -639,11 +639,20 @@ public class TruvideoSdkVideoPlugin: CAPPlugin, CAPBridgedPlugin {
                     }
                 ]
                 
-                
-                print("Video info retrieved successfully.")
                 call.resolve(["result": dictionaryResult])
-                
-            } catch {
+                //                  do{
+                //                    let jsonData = try JSONSerialization.data(withJSONObject: dictionaryResult, options: [])
+                //                      if let jsonString = String(data: jsonData, encoding: .utf8) {
+                //                        print("json",jsonString)
+                //                        resolve(jsonString)
+                //                      }else{
+                //                        resolve("{}")
+                //                      }
+                //                    }
+                //                  } catch {
+                //                      reject("SDK_Error", "get_Video_Info_Failed", error)
+                //                  }
+            }catch {
                 print("Video info error:", error.localizedDescription)
                 call.reject("VIDEO_INFO_ERROR", "Failed to retrieve video info", error)
             }
