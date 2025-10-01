@@ -11,8 +11,18 @@ var capacitorTruvideoSdkVideo = (function (exports, core) {
     })(exports.VideoStatus || (exports.VideoStatus = {}));
     const TruvideoSdkVideo = core.registerPlugin('TruvideoSdkVideo');
     async function getVideoInfo(videoPath) {
-        let response = await TruvideoSdkVideo.getVideoInfo({ videoPath });
-        return parsePluginResponse(response);
+        //let response = await TruvideoSdkVideo.getVideoInfo({ videoPath });
+        return TruvideoSdkVideo.getVideoInfo({ videoPath }).then((response) => {
+            try {
+                const parsed = JSON.parse(JSON.stringify(response.result));
+                return parsed;
+            }
+            catch (e) {
+                console.error("Failed to parse MediaData JSON:", e);
+                return null;
+            }
+        });
+        //return parsePluginResponse<MediaInfo>(response);
     }
     async function compareVideos(videoPath) {
         let response = await TruvideoSdkVideo.compareVideos({ videoUris: videoPath });

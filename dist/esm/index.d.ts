@@ -38,7 +38,7 @@ export interface MediaInfo {
     videoTracks: VideoTrack[];
     audioTracks: AudioTrack[];
 }
-export declare function getVideoInfo(videoPath: string): Promise<MediaInfo>;
+export declare function getVideoInfo(videoPath: string): Promise<MediaInfo | null>;
 export declare function compareVideos(videoPath: string): Promise<Boolean>;
 export declare function cleanNoise(videoUri: string, resultPath: string): Promise<{
     result: object;

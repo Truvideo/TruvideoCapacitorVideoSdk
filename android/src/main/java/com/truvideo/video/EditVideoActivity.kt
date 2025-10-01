@@ -41,7 +41,7 @@ class EditVideoActivity : ComponentActivity() {
             // edited video its on 'resultPath'
             //TruvideoReactTurboVideoSdkModule.mainPromise!!.resolve(result)
             val ret = JSObject()
-            ret.put("result",result)
+            ret.put("result",result ?: "")
             TruvideoSdkVideoPlugin.mainCall!!.resolve(ret)
             finish()
             Log.d("TAG", "editVideo: result=$result")

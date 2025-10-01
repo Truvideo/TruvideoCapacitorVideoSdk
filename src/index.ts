@@ -52,9 +52,18 @@ export interface MediaInfo {
 
 const TruvideoSdkVideo = registerPlugin<TruvideoSdkVideoPlugin>('TruvideoSdkVideo');
 
-export async function getVideoInfo(videoPath: string): Promise<MediaInfo> {
-    let response = await TruvideoSdkVideo.getVideoInfo({ videoPath });
-    return parsePluginResponse<MediaInfo>(response);
+export async function getVideoInfo(videoPath: string): Promise<MediaInfo | null> {
+    //let response = await TruvideoSdkVideo.getVideoInfo({ videoPath });
+    return TruvideoSdkVideo.getVideoInfo({ videoPath }).then((response: { result: object }) => {
+        try {
+            const parsed: MediaInfo = JSON.parse(JSON.stringify(response.result));
+            return parsed;
+        } catch (e) {
+            console.error("Failed to parse MediaData JSON:", e);
+            return null;
+        }
+    });
+    //return parsePluginResponse<MediaInfo>(response);
 }
 export async function compareVideos(videoPath: string): Promise<Boolean> {
     let response = await TruvideoSdkVideo.compareVideos({ videoUris: videoPath });

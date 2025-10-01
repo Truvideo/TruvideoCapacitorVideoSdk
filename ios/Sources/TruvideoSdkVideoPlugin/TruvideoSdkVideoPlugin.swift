@@ -64,8 +64,12 @@ public class TruvideoSdkVideoPlugin: CAPPlugin, CAPBridgedPlugin {
             
             // Present the Truvideo SDK video editor
             rootViewController.presentTruvideoSdkVideoEditorView(input: inputPath, output: outputPath, onComplete: { editionResult in
-                call.resolve(["result": editionResult.editedVideoURL?.absoluteString])
-                print("Successfully edited", editionResult.editedVideoURL?.absoluteString ?? "")
+                if(editionResult.editedVideoURL == nil){
+                    call.resolve(["result": ""])
+                }else{
+                    call.resolve(["result": editionResult.editedVideoURL?.absoluteString ?? ""])
+                    print("Successfully edited", editionResult.editedVideoURL?.absoluteString ?? "")
+                }
             })
         }
     }
