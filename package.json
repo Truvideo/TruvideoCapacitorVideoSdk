@@ -1,6 +1,6 @@
 {
-  "name": "truvideo-capacitor-video-sdk",
-  "version": "0.0.1",
+  "name": "@trunpm/truvideo-capacitor-video-sdk",
+  "version": "0.0.3",
   "description": "Plugin for Video Module is capacitor js",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",
@@ -13,9 +13,17 @@
     "ios/Sources",
     "ios/Tests",
     "Package.swift",
-    "TruvideoCapacitorVideoSdk.podspec"
+    "TruvideoCapacitorVideoSdk.podspec",
+    "TrunpmTruvideoCapacitorVideoSdk.podspec"
   ],
   "author": "Truvideo",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "restricted"
+  },
+  "ios": {
+    "podspec": "TruvideoCapacitorVideoSdk.podspec"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -76,5 +84,9 @@
     "android": {
       "src": "android"
     }
-  }
+  },
+  "dependencies": {
+    
+  },
+  "homepage": "https://github.com/Truvideo/TruvideoCapacitorVideoSdk.git#readme"
 }
