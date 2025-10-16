@@ -7,21 +7,21 @@ fun getStatus(status : TruvideoSdkVideoRequestStatus) : String{
         TruvideoSdkVideoRequestStatus.IDLE -> "idle"
         TruvideoSdkVideoRequestStatus.PROCESSING -> "processing"
         TruvideoSdkVideoRequestStatus.ERROR -> "error"
-        TruvideoSdkVideoRequestStatus.COMPLETED -> "complete"
-        TruvideoSdkVideoRequestStatus.CANCELED -> "cancelled"
+        TruvideoSdkVideoRequestStatus.COMPLETE -> "complete"
+        TruvideoSdkVideoRequestStatus.CANCELLED -> "cancelled"
     }
 }
 
 fun getStatus(status : String?) : TruvideoSdkVideoRequestStatus?{
     return when (status) {
         "cancelled" -> {
-            TruvideoSdkVideoRequestStatus.CANCELED
+            TruvideoSdkVideoRequestStatus.CANCELLED
         }
         "processing" -> {
             TruvideoSdkVideoRequestStatus.PROCESSING
         }
         "complete" -> {
-            TruvideoSdkVideoRequestStatus.COMPLETED
+            TruvideoSdkVideoRequestStatus.COMPLETE
         }
         "idle" -> {
             TruvideoSdkVideoRequestStatus.IDLE
