@@ -6,6 +6,9 @@ import android.content.Intent;
 import android.os.Build;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
@@ -58,6 +61,25 @@ public class TruvideoSdkVideoPlugin extends Plugin {
             }
         });
 
+    }
+
+    @PluginMethod
+    public void streamAllRequests(PluginCall call){
+        String status = call.getString("status");
+        TruvideoSdkVideoRequestStatus requestStatus = UtilsKt.getStatus(status);
+        LiveData<List<TruvideoSdkVideoRequest>> requests  = TruvideoSdkVideo.streamAllRequests(requestStatus);
+        requests.observe(getActivity(), new Observer<List<TruvideoSdkVideoRequest>>() {
+            @Override
+            public void onChanged(List<TruvideoSdkVideoRequest> truvideoSdkVideoRequests) {
+                JSObject ret = new JSObject();
+                ret.put("result", returnRequests(truvideoSdkVideoRequests));
+                sendEvent("AllStream",ret);
+            }
+        });
+    }
+
+    public void sendEvent(String event, JSObject object) {
+        notifyListeners(event,object);
     }
     @PluginMethod
     public void echo(PluginCall call) {
@@ -315,6 +337,23 @@ public class TruvideoSdkVideoPlugin extends Plugin {
             @Override
             public void onError(@NonNull TruvideoSdkException e) {
                 call.reject(e.getMessage(), e);
+            }
+        });
+    }
+
+    @PluginMethod
+    public void streamRequestById(PluginCall call) {
+        String requestId = call.getString("path");
+        if(requestId == null){
+            return;
+        }
+        LiveData<TruvideoSdkVideoRequest> liveData = TruvideoSdkVideo.streamRequestById(requestId);
+        liveData.observe(getActivity(), new Observer<TruvideoSdkVideoRequest>() {
+            @Override
+            public void onChanged(TruvideoSdkVideoRequest truvideoSdkVideoRequest) {
+                JSObject ret = new JSObject();
+                ret.put("result", returnRequest(truvideoSdkVideoRequest));
+                sendEvent("stream",ret);
             }
         });
     }

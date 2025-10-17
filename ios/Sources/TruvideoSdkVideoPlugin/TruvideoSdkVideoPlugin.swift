@@ -221,6 +221,7 @@ public class TruvideoSdkVideoPlugin: CAPPlugin, CAPBridgedPlugin {
             "createdAt" : dateFormatter.string(from: videoRequest.createdAt),
             "status" : status,
             "type" : typeString,
+            
             "updatedAt" : dateFormatter.string(from: videoRequest.updatedAt)
         ]
         print("Received request:", videoRequest)
@@ -420,6 +421,36 @@ public class TruvideoSdkVideoPlugin: CAPPlugin, CAPBridgedPlugin {
             call.reject("json_error", "Error checking video compatibility", error)
             print("Failed to create publisher:", error)
         }
+    }
+    
+    @objc func streamRequestById(_ call: CAPPluginCall) {
+        // Checks if multiple videos can be concatenated
+        guard let id = call.getString("id") else {
+            call.reject("INVALID_INPUT", "id is required")
+            return
+        }
+        var cancellables = Set<AnyCancellable>()
+        do {
+            let publisher = try TruvideoSdkVideo.streamRequest(withId: UUID(uuidString :id) ?? UUID())
+            let dateFormatter = ISO8601DateFormatter()
+            publisher
+                .sink { videoRequest in
+                    // Handle each emitted TruvideoSdkVideoRequest
+                    var jsonString = self.sendRequest(videoRequest : videoRequest)
+                    self.sendEvent(withName: "stream", body: ["result": self.sendRequest(videoRequest: videoRequest)])
+                    
+                }
+                .store(in: &cancellables)
+            
+        } catch {
+            // Handle thrown error from streamRequest
+            call.reject("json_error", "Error checking video compatibility", error)
+            print("Failed to create publisher:", error)
+        }
+    }
+    
+    private func sendEvent(withName name: String, body: [String: Any]) {
+           self.notifyListeners(name, data: body)
     }
     
     @objc func getAllRequest(_ call: CAPPluginCall) {
