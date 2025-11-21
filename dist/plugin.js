@@ -38,7 +38,14 @@ var capacitorTruvideoSdkVideo = (function (exports, core) {
         return TruvideoSdkVideo.getResultPath({ path: videoPath });
     }
     async function getAllRequests(status) {
-        let response = await TruvideoSdkVideo.getAllRequests({ status: status != undefined ? status : "" });
+        var newStatus = "";
+        if (status === undefined || status === null) {
+            newStatus = "";
+        }
+        else {
+            newStatus = status;
+        }
+        let response = await TruvideoSdkVideo.getAllRequests({ status: newStatus });
         return parsePluginResponse(response);
         //return parsePluginResponse<BuilderResponse[]>(TruvideoSdkVideo.getAllRequests({ status : status }));
     }
