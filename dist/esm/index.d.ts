@@ -49,7 +49,7 @@ export declare function editVideo(videoUri: string, resultPath: string): Promise
 export declare function getResultPath(videoPath: string): Promise<{
     result: string;
 }>;
-export declare function getAllRequests(status: VideoStatus): Promise<BuilderResponse[]>;
+export declare function getAllRequests(status: VideoStatus | undefined): Promise<BuilderResponse[]>;
 export declare function getRequestById(id: string): Promise<BuilderResponse>;
 export declare function generateThumbnail(videoPath: string, resultPath: string, position: number, width: number, height: number, precise: boolean): Promise<{
     result: object;

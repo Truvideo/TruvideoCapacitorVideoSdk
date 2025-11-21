@@ -39,7 +39,7 @@ function getResultPath(videoPath) {
     return TruvideoSdkVideo.getResultPath({ path: videoPath });
 }
 async function getAllRequests(status) {
-    let response = await TruvideoSdkVideo.getAllRequests({ status: status });
+    let response = await TruvideoSdkVideo.getAllRequests({ status: status != undefined ? status : "" });
     return parsePluginResponse(response);
     //return parsePluginResponse<BuilderResponse[]>(TruvideoSdkVideo.getAllRequests({ status : status }));
 }
