@@ -35,6 +35,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+
 import kotlin.Unit;
 import truvideo.sdk.common.exceptions.TruvideoSdkException;
 
@@ -46,7 +48,8 @@ public class TruvideoSdkVideoPlugin extends Plugin {
     public void getAllRequests(PluginCall call){
 
         String status = call.getString("status");
-        TruvideoSdkVideoRequestStatus requestStatus = UtilsKt.getStatus(status);
+
+        TruvideoSdkVideoRequestStatus requestStatus = Objects.equals(status, "") ? null : UtilsKt.getStatus(status);
         TruvideoSdkVideo.getAllRequests(requestStatus, new TruvideoSdkVideoCallback<>(){
             @Override
             public void onComplete(List<TruvideoSdkVideoRequest> requests) {
@@ -66,7 +69,7 @@ public class TruvideoSdkVideoPlugin extends Plugin {
     @PluginMethod
     public void streamAllRequests(PluginCall call){
         String status = call.getString("status");
-        TruvideoSdkVideoRequestStatus requestStatus = UtilsKt.getStatus(status);
+        TruvideoSdkVideoRequestStatus requestStatus = Objects.equals(status, "") ? null : UtilsKt.getStatus(status);
         LiveData<List<TruvideoSdkVideoRequest>> requests  = TruvideoSdkVideo.streamAllRequests(requestStatus);
         requests.observe(getActivity(), new Observer<List<TruvideoSdkVideoRequest>>() {
             @Override

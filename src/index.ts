@@ -87,8 +87,8 @@ export function getResultPath(videoPath: string): Promise<{ result: string }> {
     return TruvideoSdkVideo.getResultPath({ path: videoPath });
 }
 
-export async function getAllRequests(status: VideoStatus): Promise<BuilderResponse[]> {
-    let response = await TruvideoSdkVideo.getAllRequests({ status : status });
+export async function getAllRequests(status: VideoStatus | undefined): Promise<BuilderResponse[]> {
+    let response = await TruvideoSdkVideo.getAllRequests({ status : status != undefined ? status : "" });
     return parsePluginResponse<BuilderResponse[]>(response);
     //return parsePluginResponse<BuilderResponse[]>(TruvideoSdkVideo.getAllRequests({ status : status }));
 }
