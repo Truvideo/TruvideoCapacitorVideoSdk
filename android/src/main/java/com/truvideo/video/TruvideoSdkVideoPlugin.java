@@ -49,20 +49,36 @@ public class TruvideoSdkVideoPlugin extends Plugin {
 
         String status = call.getString("status");
 
-        TruvideoSdkVideoRequestStatus requestStatus = Objects.equals(status, "") ? null : UtilsKt.getStatus(status);
-        TruvideoSdkVideo.getAllRequests(requestStatus, new TruvideoSdkVideoCallback<>(){
-            @Override
-            public void onComplete(List<TruvideoSdkVideoRequest> requests) {
-                JSObject ret = new JSObject();
-                ret.put("result", returnRequests(requests));
-                call.resolve(ret);
-            }
+        if(Objects.equals(status, "")){
+            UtilsKt.getAllRe(  new TruvideoSdkVideoCallback<>(){
+                @Override
+                public void onComplete(List<TruvideoSdkVideoRequest> requests) {
+                    JSObject ret = new JSObject();
+                    ret.put("result", returnRequests(requests));
+                    call.resolve(ret);
+                }
 
-            @Override
-            public void onError(@NonNull TruvideoSdkException e) {
+                @Override
+                public void onError(@NonNull TruvideoSdkException e) {
+                    call.reject("Error getting all requests", e.getMessage());
+                }
+            });
+        }else{
+            TruvideoSdkVideoRequestStatus requestStatus = Objects.equals(status, "") ? null : UtilsKt.getStatus(status);
+            TruvideoSdkVideo.getAllRequests(requestStatus, new TruvideoSdkVideoCallback<>(){
+                @Override
+                public void onComplete(List<TruvideoSdkVideoRequest> requests) {
+                    JSObject ret = new JSObject();
+                    ret.put("result", returnRequests(requests));
+                    call.resolve(ret);
+                }
 
-            }
-        });
+                @Override
+                public void onError(@NonNull TruvideoSdkException e) {
+                    call.reject("Error getting all requests", e.getMessage());
+                }
+            });
+        }
 
     }
 
