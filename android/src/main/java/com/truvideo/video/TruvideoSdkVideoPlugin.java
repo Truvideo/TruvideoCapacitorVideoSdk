@@ -46,46 +46,28 @@ public class TruvideoSdkVideoPlugin extends Plugin {
 
     @PluginMethod
     public void getAllRequests(PluginCall call){
-
         String status = call.getString("status");
+        TruvideoSdkVideoRequestStatus requestStatus = UtilsKt.getStatus(status);
+        TruvideoSdkVideo.getAllRequests(requestStatus, new TruvideoSdkVideoCallback<>(){
+            @Override
+            public void onComplete(List<TruvideoSdkVideoRequest> requests) {
+                JSObject ret = new JSObject();
+                ret.put("result", returnRequests(requests));
+                call.resolve(ret);
+            }
 
-        if(Objects.equals(status, "")){
-            UtilsKt.getAllRe(  new TruvideoSdkVideoCallback<>(){
-                @Override
-                public void onComplete(List<TruvideoSdkVideoRequest> requests) {
-                    JSObject ret = new JSObject();
-                    ret.put("result", returnRequests(requests));
-                    call.resolve(ret);
-                }
-
-                @Override
-                public void onError(@NonNull TruvideoSdkException e) {
-                    call.reject("Error getting all requests", e.getMessage());
-                }
-            });
-        }else{
-            TruvideoSdkVideoRequestStatus requestStatus = Objects.equals(status, "") ? null : UtilsKt.getStatus(status);
-            TruvideoSdkVideo.getAllRequests(requestStatus, new TruvideoSdkVideoCallback<>(){
-                @Override
-                public void onComplete(List<TruvideoSdkVideoRequest> requests) {
-                    JSObject ret = new JSObject();
-                    ret.put("result", returnRequests(requests));
-                    call.resolve(ret);
-                }
-
-                @Override
-                public void onError(@NonNull TruvideoSdkException e) {
-                    call.reject("Error getting all requests", e.getMessage());
-                }
-            });
-        }
+            @Override
+            public void onError(@NonNull TruvideoSdkException e) {
+                call.reject("Error getting all requests", e.getMessage());
+            }
+        });
 
     }
 
     @PluginMethod
     public void streamAllRequests(PluginCall call){
         String status = call.getString("status");
-        TruvideoSdkVideoRequestStatus requestStatus = Objects.equals(status, "") ? null : UtilsKt.getStatus(status);
+        TruvideoSdkVideoRequestStatus requestStatus = UtilsKt.getStatus(status);
         LiveData<List<TruvideoSdkVideoRequest>> requests  = TruvideoSdkVideo.streamAllRequests(requestStatus);
         requests.observe(getActivity(), new Observer<List<TruvideoSdkVideoRequest>>() {
             @Override
@@ -341,8 +323,9 @@ public class TruvideoSdkVideoPlugin extends Plugin {
 
     @PluginMethod
     public void getRequestById(PluginCall call) {
-        String requestId = call.getString("path");
+        String requestId = call.getString("id");
         if(requestId == null){
+            call.reject("Invalid request id");
             return;
         }
         TruvideoSdkVideo.getRequestById(requestId, new TruvideoSdkVideoCallback<TruvideoSdkVideoRequest>() {
