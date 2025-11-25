@@ -537,7 +537,7 @@ public class TruvideoSdkVideoPlugin extends Plugin {
         String basePath = getContext().getFilesDir().getPath();
 
         JSObject ret = new JSObject();
-        ret.put("result", new File(basePath + "/camera/" + path).getPath());
+        ret.put("result", new File(basePath + "/" + path).getPath());
         call.resolve(ret);
     }
 

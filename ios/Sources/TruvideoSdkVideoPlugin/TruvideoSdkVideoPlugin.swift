@@ -26,8 +26,9 @@ public class TruvideoSdkVideoPlugin: CAPPlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "editVideo", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "processVideo", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "cancelVideo", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "getAllRequest", returnType: CAPPluginReturnPromise)
-    
+        CAPPluginMethod(name: "getAllRequest", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "getRequestById", returnType: CAPPluginReturnPromise)
+        
     ]
     
     var cancellables = Set<AnyCancellable>()
