@@ -76,6 +76,37 @@ export var BuilderType;
     BuilderType["concat"] = "concat";
     BuilderType["encode"] = "encode";
 })(BuilderType || (BuilderType = {}));
+export class BuilderRequest {
+    constructor(data) {
+        this.id = data.id;
+        this.createdAt = data.createdAt;
+        this.status = data.status;
+        this.type = data.type;
+        this.updatedAt = data.updatedAt;
+        this.builderData = data;
+    }
+    async process() {
+        if (!this.id) {
+            throw new Error('concatData.id is undefined. Call build() first.');
+        }
+        const response = await TruvideoSdkVideo.processVideo({
+            path: this.id
+        });
+        this.builderData = parsePluginResponse(response);
+        return this.builderData;
+    }
+    async cancel() {
+        var _a;
+        if (!((_a = this.builderData) === null || _a === void 0 ? void 0 : _a.id)) {
+            throw new Error('concatData.id is undefined. Call build() first.');
+        }
+        const response = await TruvideoSdkVideo.cancelVideo({
+            path: this.builderData.id
+        });
+        this.builderData = parsePluginResponse(response);
+        return this.builderData;
+    }
+}
 export class MergeBuilder {
     constructor(filePaths, resultPath) {
         this.height = '';

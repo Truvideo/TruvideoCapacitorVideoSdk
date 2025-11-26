@@ -144,6 +144,51 @@ export interface BuilderResponse {
     updatedAt: string;
 }
 
+
+export class BuilderRequest {
+    id: string;
+    createdAt: string;
+    status: string;
+    type: BuilderType;
+    updatedAt: string;
+    builderData: BuilderResponse;
+    constructor(data: BuilderResponse) {
+        this.id = data.id;
+        this.createdAt = data.createdAt;
+        this.status = data.status;
+        this.type = data.type;
+        this.updatedAt = data.updatedAt;
+        this.builderData = data;
+    }
+
+    async process(): Promise<BuilderResponse> {
+        if (!this.id) {
+            throw new Error('concatData.id is undefined. Call build() first.');
+        }
+
+        const response = await TruvideoSdkVideo.processVideo({
+            path: this.id
+        });
+
+        this.builderData = parsePluginResponse<BuilderResponse>(response);
+        return this.builderData;
+    }
+
+    async cancel(): Promise<BuilderResponse> {
+        if (!this.builderData?.id) {
+            throw new Error('concatData.id is undefined. Call build() first.');
+        }
+
+        const response = await TruvideoSdkVideo.cancelVideo({
+            path: this.builderData.id
+        });
+
+        this.builderData = parsePluginResponse<BuilderResponse>(response);
+        return this.builderData;
+    }
+}
+
+
 export class MergeBuilder {
     private _filePath: string;
     private resultPath: string;

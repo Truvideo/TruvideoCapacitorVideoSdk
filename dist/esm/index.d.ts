@@ -73,6 +73,17 @@ export interface BuilderResponse {
     type: BuilderType;
     updatedAt: string;
 }
+export declare class BuilderRequest {
+    id: string;
+    createdAt: string;
+    status: string;
+    type: BuilderType;
+    updatedAt: string;
+    builderData: BuilderResponse;
+    constructor(data: BuilderResponse);
+    process(): Promise<BuilderResponse>;
+    cancel(): Promise<BuilderResponse>;
+}
 export declare class MergeBuilder {
     private _filePath;
     private resultPath;
