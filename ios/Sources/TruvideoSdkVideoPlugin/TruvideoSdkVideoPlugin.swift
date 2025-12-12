@@ -26,7 +26,7 @@ public class TruvideoSdkVideoPlugin: CAPPlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "editVideo", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "processVideo", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "cancelVideo", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "getAllRequest", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "getAllRequests", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "getRequestById", returnType: CAPPluginReturnPromise)
         
     ]
@@ -456,7 +456,7 @@ public class TruvideoSdkVideoPlugin: CAPPlugin, CAPBridgedPlugin {
            self.notifyListeners(name, data: body)
     }
     
-    @objc func getAllRequest(_ call: CAPPluginCall) {
+    @objc func getAllRequests(_ call: CAPPluginCall) {
         // Checks if multiple videos can be concatenated
         guard let status = call.getString("status") else {
             call.reject("INVALID_INPUT", "id is required")
