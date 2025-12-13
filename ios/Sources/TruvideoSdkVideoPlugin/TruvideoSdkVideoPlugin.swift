@@ -343,26 +343,30 @@ public class TruvideoSdkVideoPlugin: CAPPlugin, CAPBridgedPlugin {
             call.reject("INVALID_INPUT", "id is required")
             return
         }
-        var cancellables = Set<AnyCancellable>()
         do {
-            let publisher = try TruvideoSdkVideo.streamRequest(withId: UUID(uuidString :id) ?? UUID())
-            let dateFormatter = ISO8601DateFormatter()
-            publisher
-                .sink { videoRequest in
-                    // Handle each emitted TruvideoSdkVideoRequest
-                    do {
-                        try videoRequest.cancel()
-                        call.resolve(["result": self.sendRequest(videoRequest: videoRequest)])
-                    }catch{
-                        call.reject("TruvideoSdkExceptions","\(error.localizedDescription)",nil)
+            try TruvideoSdkVideo.streamRequest(withId: UUID(uuidString: id) ?? UUID())
+                .first() // ✅ only take the first emitted value
+                .sink(receiveCompletion: { completion in
+                    if case .failure(let error) = completion {
+                        call.reject("STREAM_FAILED", error.localizedDescription)
                     }
-                    cancellables.removeAll()
-                }
+                }, receiveValue: { videoRequest in
+                    Task {
+                        do {
+                            let result =  try await videoRequest.cancel()
+                            call.resolve(["result": self.sendRequest(videoRequest: videoRequest)])
+                         //   call.resolve(["result": result.videoURL.absoluteString])
+                            self.cancellables.removeAll()
+                        }catch{
+                            call.reject("TruvideoSdkExceptions","\(error.localizedDescription)",nil)
+                        }
+                    }
+                })
                 .store(in: &cancellables)
             
         } catch {
             // Handle thrown error from streamRequest
-            call.reject("json_error", "Error checking video compatibility", error)
+            call.reject("json_error", "Error", error)
             print("Failed to create publisher:", error)
         }
     }
@@ -395,7 +399,7 @@ public class TruvideoSdkVideoPlugin: CAPPlugin, CAPBridgedPlugin {
                 .store(in: &cancellables)
             
         } catch {
-            call.reject("json_error", "Error checking video compatibility", error)
+            call.reject("json_error", "Error", error)
             print("Failed to create publisher:", error)
         }
     }
