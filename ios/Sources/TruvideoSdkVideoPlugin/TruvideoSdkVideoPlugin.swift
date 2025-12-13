@@ -468,32 +468,54 @@ public class TruvideoSdkVideoPlugin: CAPPlugin, CAPBridgedPlugin {
         }
         var cancellables = Set<AnyCancellable>()
         var statusData : TruvideoSdkVideoRequest.Status?
-            if (status == "IDLE"){
-              statusData = .idle
-            }else if(status == "CANCELED"){
-              statusData = .cancelled
-            }else if(status == "COMPLETED"){
-              statusData = .complete
-            }else if(status == "ERROR"){
-              statusData = .error
-            }else if(status == "PROCESSING"){
-              statusData = .processing
-            }else {
-              statusData = nil
-            }
+        if (status == "IDLE"){
+            statusData = .idle
+        }else if(status == "CANCELED"){
+            statusData = .cancelled
+        }else if(status == "COMPLETED"){
+            statusData = .complete
+        }else if(status == "ERROR"){
+            statusData = .error
+        }else if(status == "PROCESSING"){
+            statusData = .processing
+        }else {
+            statusData = nil
+        }
         
-        let publisher = TruvideoSdkVideo.streamRequests(withStatus: statusData)
-        //let dateFormatter = ISO8601DateFormatter()
-        publisher
-            .sink { videoRequest in
-                // Handle each emitted TruvideoSdkVideoRequest
-                let jsonString = self.sendRequests(videoRequests : videoRequest)
-                call.resolve(["result": jsonString])
-                cancellables.removeAll()
+        do {
+            // If the SDK supports passing nil to get all, use statusData directly.
+            // If not, you may need a separate non-filtered API.
+            if(statusData == nil){
+                let requests = try TruvideoSdkVideo.getRequests(withStatus: .idle)
+                let cancelled = try TruvideoSdkVideo.getRequests(withStatus: .cancelled)
+                let complete = try TruvideoSdkVideo.getRequests(withStatus: .complete)
+                let errorRequest = try TruvideoSdkVideo.getRequests(withStatus: .error)
+                let processingRequest = try TruvideoSdkVideo.getRequests(withStatus: .processing)
+                let requestsTotal: [TruvideoSdkVideoRequest] = requests + complete + errorRequest + processingRequest + cancelled + requests
+                let json = self.sendRequests(videoRequests: requestsTotal)
+                call.resolve(["result": json])
+            }else{
+                let requests = try TruvideoSdkVideo.getRequests(withStatus: statusData ?? .idle)
+                let json = self.sendRequests(videoRequests: requests)
+                call.resolve(["result": json])
             }
-            .store(in: &cancellables)
-            
+        } catch {
+            call.reject("GET_REQUESTS_ERROR", "Failed to get requests", error)
+        }
         
+        // If you instead want a streaming approach, uncomment and adapt:
+        // do {
+        //     let publisher = try TruvideoSdkVideo.streamRequests(withStatus: statusData)
+        //     publisher
+        //         .sink { videoRequests in
+        //             let json = self.sendRequests(videoRequests: videoRequests)
+        //             call.resolve(["result": json])
+        //             cancellables.removeAll()
+        //         }
+        //         .store(in: &cancellables)
+        // } catch {
+        //     call.reject("STREAM_REQUESTS_ERROR", "Error streaming requests", error)
+        // }
     }
     
     @objc func mergeVideos(_ call: CAPPluginCall) {
