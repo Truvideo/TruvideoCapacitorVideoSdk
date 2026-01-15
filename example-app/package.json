@@ -13,10 +13,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@capacitor/core": "latest",
-    "truvideo-capacitor-video-sdk": "file:..",
+    "@capacitor/android": "7.0.0",
+    "@capacitor/core": "^7.0.0",
     "@capacitor/ios": "7.0.0",
-    "@capacitor/android": "7.0.0"
+    "truvideo-capacitor-video-sdk": "file:.."
   },
   "devDependencies": {
     "@capacitor/cli": "latest",
