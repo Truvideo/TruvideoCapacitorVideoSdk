@@ -27,13 +27,6 @@ class EditVideoActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContent {
-            AndroidTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(name = "Android", modifier = Modifier.padding(innerPadding))
-                }
-            }
-        }
         val videoUri = intent.getStringExtra("videoUri")
         val resultPath = intent.getStringExtra("resultPath")
 //        val editScreen = TruvideoSdkVideo.initEditScreen(this)
