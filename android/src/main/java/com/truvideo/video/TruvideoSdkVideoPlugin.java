@@ -1,6 +1,8 @@
 package com.truvideo.video;
 
-import static com.truvideo.sdk.video.TruvideoSdkVideo.TruvideoSdkVideo;
+//import static com.truvideo.sdk.video.TruvideoSdkVideo.TruvideoSdkVideo;
+
+import com.truvideo.sdk.video.TruvideoSdkVideo;
 
 import android.content.Intent;
 import android.os.Build;
@@ -16,6 +18,7 @@ import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.truvideo.sdk.model.exceptions.TruvideoSdkException;
 import com.truvideo.sdk.video.interfaces.TruvideoSdkVideoCallback;
 import com.truvideo.sdk.video.model.TruvideoSdkVideoFile;
 import com.truvideo.sdk.video.model.TruvideoSdkVideoFileDescriptor;
@@ -38,7 +41,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import kotlin.Unit;
-import truvideo.sdk.common.exceptions.TruvideoSdkException;
 
 @CapacitorPlugin(name = "TruvideoSdkVideo")
 public class TruvideoSdkVideoPlugin extends Plugin {
@@ -48,7 +50,7 @@ public class TruvideoSdkVideoPlugin extends Plugin {
     public void getAllRequests(PluginCall call){
         String status = call.getString("status");
         TruvideoSdkVideoRequestStatus requestStatus = UtilsKt.getStatus(status);
-        TruvideoSdkVideo.getAllRequests(requestStatus, new TruvideoSdkVideoCallback<>(){
+        TruvideoSdkVideo.getInstance().getAllRequests(requestStatus, new TruvideoSdkVideoCallback<List<TruvideoSdkVideoRequest>>() {
             @Override
             public void onComplete(List<TruvideoSdkVideoRequest> requests) {
                 JSObject ret = new JSObject();
@@ -68,7 +70,7 @@ public class TruvideoSdkVideoPlugin extends Plugin {
     public void streamAllRequests(PluginCall call){
         String status = call.getString("status");
         TruvideoSdkVideoRequestStatus requestStatus = UtilsKt.getStatus(status);
-        LiveData<List<TruvideoSdkVideoRequest>> requests  = TruvideoSdkVideo.streamAllRequests(requestStatus);
+        LiveData<List<TruvideoSdkVideoRequest>> requests  = TruvideoSdkVideo.getInstance().streamAllRequests(requestStatus);
         requests.observe(getActivity(), new Observer<List<TruvideoSdkVideoRequest>>() {
             @Override
             public void onChanged(List<TruvideoSdkVideoRequest> truvideoSdkVideoRequests) {
@@ -111,7 +113,7 @@ public class TruvideoSdkVideoPlugin extends Plugin {
         String resultPath = call.getString("resultPath");
         ArrayList<String> filePaths = filePaths(call.getString("videoUris"));
 
-        TruvideoSdkVideoConcatBuilder builder = TruvideoSdkVideo.ConcatBuilder(
+        TruvideoSdkVideoConcatBuilder builder = TruvideoSdkVideo.getInstance().ConcatBuilder(
                 listVideoFile(filePaths),
                 videoFileDescriptor(resultPath)
         );
@@ -185,7 +187,7 @@ public class TruvideoSdkVideoPlugin extends Plugin {
         String filePaths = call.getString("videoUri");
         String config = call.getString("config");
 
-        TruvideoSdkVideoEncodeBuilder builder = TruvideoSdkVideo.EncodeBuilder(
+        TruvideoSdkVideoEncodeBuilder builder = TruvideoSdkVideo.getInstance().EncodeBuilder(
                 videoFile(filePaths),
                 videoFileDescriptor(resultPath)
         );
@@ -245,7 +247,7 @@ public class TruvideoSdkVideoPlugin extends Plugin {
         // Compares multiple videos for equality
         ArrayList<String> filePaths = filePaths(call.getString("videoUris"));
 
-        TruvideoSdkVideo.compare(listVideoFile(filePaths), new TruvideoSdkVideoCallback<Boolean>() {
+        TruvideoSdkVideo.getInstance().compare(listVideoFile(filePaths), true, new TruvideoSdkVideoCallback<Boolean>() {
             @Override
             public void onComplete(Boolean isEqual) {
                 JSObject ret = new JSObject();
@@ -267,7 +269,7 @@ public class TruvideoSdkVideoPlugin extends Plugin {
         ArrayList<String> filePaths = filePaths(call.getString("videoUris"));
         String config = call.getString("config");
 
-        TruvideoSdkVideoMergeBuilder builder = TruvideoSdkVideo.MergeBuilder(
+        TruvideoSdkVideoMergeBuilder builder = TruvideoSdkVideo.getInstance().MergeBuilder(
                 listVideoFile(filePaths),
                 videoFileDescriptor(resultPath)
         );
@@ -324,13 +326,17 @@ public class TruvideoSdkVideoPlugin extends Plugin {
     @PluginMethod
     public void getRequestById(PluginCall call) {
         String requestId = call.getString("id");
-        if(requestId == null){
+        if (requestId == null) {
             call.reject("Invalid request id");
             return;
         }
-        TruvideoSdkVideo.getRequestById(requestId, new TruvideoSdkVideoCallback<TruvideoSdkVideoRequest>() {
+        TruvideoSdkVideo.getInstance().getRequestById(requestId, new TruvideoSdkVideoCallback<TruvideoSdkVideoRequest>() {
             @Override
             public void onComplete(TruvideoSdkVideoRequest truvideoSdkVideoRequest) {
+                if (truvideoSdkVideoRequest == null) {
+                    call.reject("Request not found");
+                    return;
+                }
                 JSObject ret = new JSObject();
                 ret.put("result", returnRequest(truvideoSdkVideoRequest));
                 call.resolve(ret);
@@ -349,7 +355,7 @@ public class TruvideoSdkVideoPlugin extends Plugin {
         if(requestId == null){
             return;
         }
-        LiveData<TruvideoSdkVideoRequest> liveData = TruvideoSdkVideo.streamRequestById(requestId);
+        LiveData<TruvideoSdkVideoRequest> liveData = TruvideoSdkVideo.getInstance().streamRequestById(requestId);
         liveData.observe(getActivity(), new Observer<TruvideoSdkVideoRequest>() {
             @Override
             public void onChanged(TruvideoSdkVideoRequest truvideoSdkVideoRequest) {
@@ -363,13 +369,18 @@ public class TruvideoSdkVideoPlugin extends Plugin {
     @PluginMethod
     public void processVideo(PluginCall call) {
         String requestId = call.getString("path");
-        if(requestId == null){
+        if (requestId == null) {
+            call.reject("Path is required");
             return;
         }
-        TruvideoSdkVideo.getRequestById(requestId, new TruvideoSdkVideoCallback<TruvideoSdkVideoRequest>() {
+        TruvideoSdkVideo.getInstance().getRequestById(requestId, new TruvideoSdkVideoCallback<TruvideoSdkVideoRequest>() {
             @Override
             public void onComplete(TruvideoSdkVideoRequest truvideoSdkVideoRequest) {
-                truvideoSdkVideoRequest.process(new TruvideoSdkVideoCallback<String>() {
+                if (truvideoSdkVideoRequest == null) {
+                    call.reject("Request not found");
+                    return;
+                }
+                truvideoSdkVideoRequest.process(true, new TruvideoSdkVideoCallback<String>() {
                     @Override
                     public void onComplete(String s) {
                         JSObject ret = new JSObject();
@@ -379,7 +390,7 @@ public class TruvideoSdkVideoPlugin extends Plugin {
 
                     @Override
                     public void onError(@NonNull TruvideoSdkException e) {
-
+                        call.reject(e.getMessage(), e);
                     }
                 });
             }
@@ -394,12 +405,17 @@ public class TruvideoSdkVideoPlugin extends Plugin {
     @PluginMethod
     public void delete(PluginCall call) {
         String requestId = call.getString("path");
-        if(requestId == null){
+        if (requestId == null) {
+            call.reject("Path is required");
             return;
         }
-        TruvideoSdkVideo.getRequestById(requestId, new TruvideoSdkVideoCallback<TruvideoSdkVideoRequest>() {
+        TruvideoSdkVideo.getInstance().getRequestById(requestId, new TruvideoSdkVideoCallback<TruvideoSdkVideoRequest>() {
             @Override
             public void onComplete(TruvideoSdkVideoRequest truvideoSdkVideoRequest) {
+                if (truvideoSdkVideoRequest == null) {
+                    call.reject("Request not found");
+                    return;
+                }
                 truvideoSdkVideoRequest.delete(new TruvideoSdkVideoCallback<Unit>() {
                     @Override
                     public void onComplete(Unit unit) {
@@ -425,13 +441,18 @@ public class TruvideoSdkVideoPlugin extends Plugin {
     @PluginMethod
     public void cancelVideo(PluginCall call) {
         String requestId = call.getString("path");
-        if(requestId == null){
+        if (requestId == null) {
+            call.reject("Path is required");
             return;
         }
-        TruvideoSdkVideo.getRequestById(requestId, new TruvideoSdkVideoCallback<TruvideoSdkVideoRequest>() {
+        TruvideoSdkVideo.getInstance().getRequestById(requestId, new TruvideoSdkVideoCallback<TruvideoSdkVideoRequest>() {
             @Override
             public void onComplete(TruvideoSdkVideoRequest truvideoSdkVideoRequest) {
-                truvideoSdkVideoRequest.cancel(new TruvideoSdkVideoCallback<Unit>() {
+                if (truvideoSdkVideoRequest == null) {
+                    call.reject("Request not found");
+                    return;
+                }
+                truvideoSdkVideoRequest.cancel(true, new TruvideoSdkVideoCallback<Unit>() {
                     @Override
                     public void onComplete(Unit unit) {
                         JSObject ret = new JSObject();
@@ -460,7 +481,7 @@ public class TruvideoSdkVideoPlugin extends Plugin {
         // Retrieves video metadata information
         String videoPath = call.getString("videoPath");
 
-        TruvideoSdkVideo.getInfo(videoFile(videoPath), new TruvideoSdkVideoCallback<TruvideoSdkVideoInformation>() {
+        TruvideoSdkVideo.getInstance().getInfo(videoFile(videoPath), true, new TruvideoSdkVideoCallback<TruvideoSdkVideoInformation>() {
             @Override
             public void onComplete(TruvideoSdkVideoInformation videoInfo) {
                 JSObject ret = new JSObject();
@@ -485,13 +506,14 @@ public class TruvideoSdkVideoPlugin extends Plugin {
         int height = call.getInt("height");
         Boolean precise = call.getBoolean("precise");
 
-        TruvideoSdkVideo.createThumbnail(
+        TruvideoSdkVideo.getInstance().createThumbnail(
                 videoFile(videoPath),
                 videoFileDescriptor(resultPath),
-                position,
+                (long) position,
                 height,
                 width,
                 precise != null ? precise : false,
+                true,
                 new TruvideoSdkVideoCallback<String>() {
                     @Override
                     public void onComplete(String thumbnailPath) {
@@ -515,7 +537,7 @@ public class TruvideoSdkVideoPlugin extends Plugin {
         String videoPath = call.getString("videoPath");
         String resultPath = call.getString("resultPath");
 
-        TruvideoSdkVideo.clearNoise(videoFile(videoPath), videoFileDescriptor(resultPath), new TruvideoSdkVideoCallback<String>() {
+        TruvideoSdkVideo.getInstance().clearNoise(videoFile(videoPath), videoFileDescriptor(resultPath), true, new TruvideoSdkVideoCallback<String>() {
             @Override
             public void onComplete(String outputPath) {
                 JSObject ret = new JSObject();
