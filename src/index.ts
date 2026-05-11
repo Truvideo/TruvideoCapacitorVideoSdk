@@ -189,6 +189,14 @@ export class BuilderRequest {
 }
 
 
+/** Muxed video outputs should use a real container extension (native SDKs often fail without it). */
+function ensureVideoResultPath(resultPath: string): string {
+    if (/\.(mp4|mov|m4v|webm|mkv|3gp)$/i.test(resultPath)) {
+        return resultPath;
+    }
+    return `${resultPath}.mp4`;
+}
+
 export class MergeBuilder {
     private _filePath: string;
     private resultPath: string;
@@ -205,7 +213,7 @@ export class MergeBuilder {
             throw new Error('resultPath is required for MediaBuilder.');
         }
         this._filePath = filePaths;
-        this.resultPath = resultPath;
+        this.resultPath = ensureVideoResultPath(resultPath);
     }
 
     setHeight(height: number): MergeBuilder {
@@ -293,7 +301,7 @@ export class ConcatBuilder {
             throw new Error('resultPath is required for ConcatBuilder.');
         }
         this._filePath = filePaths;
-        this.resultPath = resultPath;
+        this.resultPath = ensureVideoResultPath(resultPath);
     }
 
     async build(): Promise<ConcatBuilder> {
@@ -344,7 +352,7 @@ export class EncodeBuilder {
         if (!filePath) throw new Error('filePath is required for EncodeBuilder.');
         if (!resultPath) throw new Error('resultPath is required for EncodeBuilder.');
         this.filePath = filePath;
-        this.resultPath = resultPath;
+        this.resultPath = ensureVideoResultPath(resultPath);
     }
 
     setHeight(height: number): EncodeBuilder {

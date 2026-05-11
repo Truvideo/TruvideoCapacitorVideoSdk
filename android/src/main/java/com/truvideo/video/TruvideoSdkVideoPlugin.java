@@ -5,7 +5,11 @@ package com.truvideo.video;
 import com.truvideo.sdk.video.TruvideoSdkVideo;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
@@ -36,6 +40,7 @@ import java.io.File;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -98,12 +103,78 @@ public class TruvideoSdkVideoPlugin extends Plugin {
         try {
             JSONArray array = new JSONArray(videoUris);
             for (int i = 0; i < array.length(); i++) {
-                arrayList.add(array.get(i).toString());
+                if (array.isNull(i)) {
+                    continue;
+                }
+                String p = array.optString(i, "");
+                if (!p.isEmpty()) {
+                    arrayList.add(normalizeLocalVideoPath(p));
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return arrayList;
+    }
+
+    /**
+     * Strips accidental wrapping quotes and maps {@code file://} URIs to a filesystem path for Media3.
+     */
+    private static String normalizeLocalVideoPath(String raw) {
+        if (raw == null) {
+            return null;
+        }
+        String p = raw.trim();
+        while (p.length() >= 2 && p.startsWith("\"") && p.endsWith("\"")) {
+            p = p.substring(1, p.length() - 1).trim();
+        }
+        while (p.length() >= 2 && p.startsWith("'") && p.endsWith("'")) {
+            p = p.substring(1, p.length() - 1).trim();
+        }
+        if (p.startsWith("file:")) {
+            try {
+                Uri u = Uri.parse(p);
+                String path = u.getPath();
+                if (path != null && !path.isEmpty()) {
+                    p = path;
+                }
+            } catch (Exception ignored) {
+                // keep original p
+            }
+        }
+        return p;
+    }
+
+    /**
+     * Fails fast with a clear plugin error instead of Media3 "Unknown error" when the path is wrong.
+     */
+    private boolean assertReadableVideoFile(PluginCall call, String path) {
+        if (path == null || path.isEmpty()) {
+            call.reject("Video path is empty");
+            return false;
+        }
+        if (path.startsWith("content:")) {
+            return true;
+        }
+        File f = new File(path);
+        if (!f.isFile() || !f.canRead()) {
+            call.reject(
+                "Video file not found or not readable (ENOENT). Path: "
+                    + path
+                    + ". Ensure the file exists before merge/encode and the path is not stale."
+            );
+            return false;
+        }
+        return true;
+    }
+
+    private boolean assertReadableVideoFiles(PluginCall call, List<String> paths) {
+        for (String p : paths) {
+            if (!assertReadableVideoFile(call, p)) {
+                return false;
+            }
+        }
+        return true;
     }
 
 
@@ -112,10 +183,21 @@ public class TruvideoSdkVideoPlugin extends Plugin {
         // Concatenates multiple videos into one
         String resultPath = call.getString("resultPath");
         ArrayList<String> filePaths = filePaths(call.getString("videoUris"));
+        if (resultPath == null || resultPath.isEmpty()) {
+            call.reject("resultPath is required");
+            return;
+        }
+        if (filePaths.isEmpty()) {
+            call.reject("videoUris must be a JSON array string with at least one file path");
+            return;
+        }
+        if (!assertReadableVideoFiles(call, filePaths)) {
+            return;
+        }
 
         TruvideoSdkVideoConcatBuilder builder = TruvideoSdkVideo.getInstance().ConcatBuilder(
                 listVideoFile(filePaths),
-                videoFileDescriptor(resultPath)
+                videoOutputDescriptor(resultPath)
         );
 
         builder.build(new TruvideoSdkVideoCallback<TruvideoSdkVideoRequest>() {
@@ -128,7 +210,7 @@ public class TruvideoSdkVideoPlugin extends Plugin {
 
             @Override
             public void onError(@NonNull TruvideoSdkException e) {
-                call.reject(e.getMessage(), e);
+                rejectTruvideoSdk(call, e);
             }
         });
     }
@@ -186,23 +268,40 @@ public class TruvideoSdkVideoPlugin extends Plugin {
         String resultPath = call.getString("resultPath");
         String filePaths = call.getString("videoUri");
         String config = call.getString("config");
+        if (filePaths == null || filePaths.isEmpty()) {
+            call.reject("videoUri is required");
+            return;
+        }
+        if (resultPath == null || resultPath.isEmpty()) {
+            call.reject("resultPath is required");
+            return;
+        }
+        if (config == null || config.isEmpty()) {
+            config = "{}";
+        }
+        if (!assertReadableVideoFile(call, normalizeLocalVideoPath(filePaths))) {
+            return;
+        }
 
         TruvideoSdkVideoEncodeBuilder builder = TruvideoSdkVideo.getInstance().EncodeBuilder(
                 videoFile(filePaths),
-                videoFileDescriptor(resultPath)
+                videoOutputDescriptor(resultPath)
         );
 
         try {
             JSONObject configuration = new JSONObject(config);
 
-            if (configuration.has("height")) {
-                builder.setHeight(configuration.getInt("height"));
+            Integer h = optNonEmptyInt(configuration, "height");
+            if (h != null) {
+                builder.setHeight(h);
             }
-            if (configuration.has("width")) {
-                builder.setWidth(configuration.getInt("width"));
+            Integer w = optNonEmptyInt(configuration, "width");
+            if (w != null) {
+                builder.setWidth(w);
             }
-            if (configuration.has("framesRate")) {
-                switch (configuration.getString("framesRate")) {
+            String framesRate = configuration.optString("framesRate", "");
+            if (!framesRate.isEmpty()) {
+                switch (framesRate) {
                     case "twentyFourFps":
                         builder.setFramesRate(TruvideoSdkVideoFrameRate.twentyFourFps);
                         break;
@@ -236,7 +335,7 @@ public class TruvideoSdkVideoPlugin extends Plugin {
 
             @Override
             public void onError(@NonNull TruvideoSdkException e) {
-                call.reject(e.getMessage(), e);
+                rejectTruvideoSdk(call, e);
             }
         });
     }
@@ -246,6 +345,13 @@ public class TruvideoSdkVideoPlugin extends Plugin {
     public void compareVideos(PluginCall call) {
         // Compares multiple videos for equality
         ArrayList<String> filePaths = filePaths(call.getString("videoUris"));
+        if (filePaths.isEmpty()) {
+            call.reject("videoUris must be a JSON array string with at least one file path");
+            return;
+        }
+        if (!assertReadableVideoFiles(call, filePaths)) {
+            return;
+        }
 
         TruvideoSdkVideo.getInstance().compare(listVideoFile(filePaths), true, new TruvideoSdkVideoCallback<Boolean>() {
             @Override
@@ -257,7 +363,7 @@ public class TruvideoSdkVideoPlugin extends Plugin {
 
             @Override
             public void onError(@NonNull TruvideoSdkException e) {
-                call.reject(e.getMessage(), e);
+                rejectTruvideoSdk(call, e);
             }
         });
     }
@@ -268,23 +374,40 @@ public class TruvideoSdkVideoPlugin extends Plugin {
         String resultPath = call.getString("resultPath");
         ArrayList<String> filePaths = filePaths(call.getString("videoUris"));
         String config = call.getString("config");
+        if (resultPath == null || resultPath.isEmpty()) {
+            call.reject("resultPath is required");
+            return;
+        }
+        if (filePaths.isEmpty()) {
+            call.reject("videoUris must be a JSON array string with at least one file path");
+            return;
+        }
+        if (config == null || config.isEmpty()) {
+            config = "{}";
+        }
+        if (!assertReadableVideoFiles(call, filePaths)) {
+            return;
+        }
 
         TruvideoSdkVideoMergeBuilder builder = TruvideoSdkVideo.getInstance().MergeBuilder(
                 listVideoFile(filePaths),
-                videoFileDescriptor(resultPath)
+                videoOutputDescriptor(resultPath)
         );
 
         try {
             JSONObject configuration = new JSONObject(config);
 
-            if (configuration.has("height")) {
-                builder.setHeight(configuration.getInt("height"));
+            Integer h = optNonEmptyInt(configuration, "height");
+            if (h != null) {
+                builder.setHeight(h);
             }
-            if (configuration.has("width")) {
-                builder.setWidth(configuration.getInt("width"));
+            Integer w = optNonEmptyInt(configuration, "width");
+            if (w != null) {
+                builder.setWidth(w);
             }
-            if (configuration.has("framesRate")) {
-                switch (configuration.getString("framesRate")) {
+            String framesRate = configuration.optString("framesRate", "");
+            if (!framesRate.isEmpty()) {
+                switch (framesRate) {
                     case "twentyFourFps":
                         builder.setFramesRate(TruvideoSdkVideoFrameRate.twentyFourFps);
                         break;
@@ -318,7 +441,7 @@ public class TruvideoSdkVideoPlugin extends Plugin {
 
             @Override
             public void onError(@NonNull TruvideoSdkException e) {
-                call.reject(e.getMessage(), e);
+                rejectTruvideoSdk(call, e);
             }
         });
     }
@@ -344,7 +467,7 @@ public class TruvideoSdkVideoPlugin extends Plugin {
 
             @Override
             public void onError(@NonNull TruvideoSdkException e) {
-                call.reject(e.getMessage(), e);
+                rejectTruvideoSdk(call, e);
             }
         });
     }
@@ -380,24 +503,30 @@ public class TruvideoSdkVideoPlugin extends Plugin {
                     call.reject("Request not found");
                     return;
                 }
-                truvideoSdkVideoRequest.process(true, new TruvideoSdkVideoCallback<String>() {
+                final TruvideoSdkVideoRequest requestToProcess = truvideoSdkVideoRequest;
+                Runnable runProcess = () -> requestToProcess.process(true, new TruvideoSdkVideoCallback<String>() {
                     @Override
                     public void onComplete(String s) {
                         JSObject ret = new JSObject();
-                        ret.put("result", returnRequest(truvideoSdkVideoRequest));
+                        ret.put("result", returnRequest(requestToProcess));
                         call.resolve(ret);
                     }
 
                     @Override
                     public void onError(@NonNull TruvideoSdkException e) {
-                        call.reject(e.getMessage(), e);
+                        rejectTruvideoSdk(call, e);
                     }
                 });
+                if (Looper.myLooper() == Looper.getMainLooper()) {
+                    runProcess.run();
+                } else {
+                    new Handler(Looper.getMainLooper()).post(runProcess);
+                }
             }
 
             @Override
             public void onError(@NonNull TruvideoSdkException e) {
-                call.reject(e.getMessage(), e);
+                rejectTruvideoSdk(call, e);
             }
         });
     }
@@ -426,14 +555,14 @@ public class TruvideoSdkVideoPlugin extends Plugin {
 
                     @Override
                     public void onError(@NonNull TruvideoSdkException e) {
-                        call.reject(e.getMessage(), e);
+                        rejectTruvideoSdk(call, e);
                     }
                 });
             }
 
             @Override
             public void onError(@NonNull TruvideoSdkException e) {
-                call.reject(e.getMessage(), e);
+                rejectTruvideoSdk(call, e);
             }
         });
     }
@@ -462,14 +591,14 @@ public class TruvideoSdkVideoPlugin extends Plugin {
 
                     @Override
                     public void onError(@NonNull TruvideoSdkException e) {
-                        call.reject(e.getMessage(), e);
+                        rejectTruvideoSdk(call, e);
                     }
                 });
             }
 
             @Override
             public void onError(@NonNull TruvideoSdkException e) {
-                call.reject(e.getMessage(), e);
+                rejectTruvideoSdk(call, e);
             }
         });
     }
@@ -480,6 +609,9 @@ public class TruvideoSdkVideoPlugin extends Plugin {
     public void getVideoInfo(PluginCall call) {
         // Retrieves video metadata information
         String videoPath = call.getString("videoPath");
+        if (!assertReadableVideoFile(call, normalizeLocalVideoPath(videoPath))) {
+            return;
+        }
 
         TruvideoSdkVideo.getInstance().getInfo(videoFile(videoPath), true, new TruvideoSdkVideoCallback<TruvideoSdkVideoInformation>() {
             @Override
@@ -491,7 +623,7 @@ public class TruvideoSdkVideoPlugin extends Plugin {
 
             @Override
             public void onError(@NonNull TruvideoSdkException e) {
-                call.reject(e.getMessage(), e);
+                rejectTruvideoSdk(call, e);
             }
         });
     }
@@ -505,6 +637,10 @@ public class TruvideoSdkVideoPlugin extends Plugin {
         int width = call.getInt("width");
         int height = call.getInt("height");
         Boolean precise = call.getBoolean("precise");
+
+        if (!assertReadableVideoFile(call, normalizeLocalVideoPath(videoPath))) {
+            return;
+        }
 
         TruvideoSdkVideo.getInstance().createThumbnail(
                 videoFile(videoPath),
@@ -524,7 +660,7 @@ public class TruvideoSdkVideoPlugin extends Plugin {
 
                     @Override
                     public void onError(@NonNull TruvideoSdkException e) {
-                        call.reject(e.getMessage(), e);
+                        rejectTruvideoSdk(call, e);
                     }
                 }
         );
@@ -536,8 +672,11 @@ public class TruvideoSdkVideoPlugin extends Plugin {
         // Cleans noise from a video and saves to a result path
         String videoPath = call.getString("videoPath");
         String resultPath = call.getString("resultPath");
+        if (!assertReadableVideoFile(call, normalizeLocalVideoPath(videoPath))) {
+            return;
+        }
 
-        TruvideoSdkVideo.getInstance().clearNoise(videoFile(videoPath), videoFileDescriptor(resultPath), true, new TruvideoSdkVideoCallback<String>() {
+        TruvideoSdkVideo.getInstance().clearNoise(videoFile(videoPath), videoOutputDescriptor(resultPath), true, new TruvideoSdkVideoCallback<String>() {
             @Override
             public void onComplete(String outputPath) {
                 JSObject ret = new JSObject();
@@ -547,7 +686,7 @@ public class TruvideoSdkVideoPlugin extends Plugin {
 
             @Override
             public void onError(@NonNull TruvideoSdkException e) {
-                call.reject(e.getMessage(), e);
+                rejectTruvideoSdk(call, e);
             }
         });
     }
@@ -584,12 +723,37 @@ public class TruvideoSdkVideoPlugin extends Plugin {
 
     public TruvideoSdkVideoFile videoFile(String inputPath) {
         // Returns a TruvideoSdkVideoFile instance for a given input video path
-        return TruvideoSdkVideoFile.custom(inputPath);
+        if (inputPath == null || inputPath.isEmpty()) {
+            return TruvideoSdkVideoFile.custom(inputPath);
+        }
+        return TruvideoSdkVideoFile.custom(normalizeLocalVideoPath(inputPath));
     }
 
     public TruvideoSdkVideoFileDescriptor videoFileDescriptor(String outputPath) {
         // Returns a TruvideoSdkVideoFileDescriptor for the given output path
         return TruvideoSdkVideoFileDescriptor.Companion.custom(outputPath);
+    }
+
+    /**
+     * Output paths for muxed video (encode / merge / concat / cleanNoise) should use a real container
+     * extension; the SDK often fails with a generic error otherwise.
+     */
+    public TruvideoSdkVideoFileDescriptor videoOutputDescriptor(String outputPath) {
+        return TruvideoSdkVideoFileDescriptor.Companion.custom(ensureVideoOutputPath(outputPath));
+    }
+
+    private static String ensureVideoOutputPath(String outputPath) {
+        if (outputPath == null || outputPath.isEmpty()) {
+            return outputPath;
+        }
+        if (outputPath.matches("(?i).+\\.(mp4|mov|m4v|webm|mkv|3gp)$")) {
+            return outputPath;
+        }
+        Log.w(
+            "TruvideoSdkVideoPlugin",
+            "resultPath has no recognized video extension; appending .mp4. Original: " + outputPath
+        );
+        return outputPath + ".mp4";
     }
 
     public List<TruvideoSdkVideoFile> listVideoFile(List<String> list) {
@@ -599,6 +763,92 @@ public class TruvideoSdkVideoPlugin extends Plugin {
             listVideo.add(videoFile(video));
         }
         return listVideo;
+    }
+
+    /**
+     * Reads an int only when the key exists and string form is non-empty (JS often sends "").
+     */
+    private static Integer optNonEmptyInt(JSONObject o, String key) throws JSONException {
+        if (!o.has(key) || o.isNull(key)) {
+            return null;
+        }
+        String s = o.optString(key, "");
+        if (s.isEmpty()) {
+            return null;
+        }
+        return o.getInt(key);
+    }
+
+    private static String formatTruvideoMessage(@NonNull TruvideoSdkException e) {
+        LinkedHashSet<String> parts = new LinkedHashSet<>();
+        Throwable t = e;
+        for (int depth = 0; depth < 8 && t != null; depth++) {
+            String m = t.getMessage();
+            if (m != null && !m.trim().isEmpty()) {
+                parts.add(m.trim());
+            }
+            t = t.getCause();
+        }
+        String reflected = reflectSdkDiagnostics(e);
+        if (reflected != null && !reflected.isEmpty()) {
+            parts.add(reflected);
+        }
+        if (parts.isEmpty()) {
+            return e.toString();
+        }
+        StringBuilder sb = new StringBuilder();
+        for (String p : parts) {
+            if (sb.length() > 0) {
+                sb.append(" | ");
+            }
+            sb.append(p);
+        }
+        String joined = sb.toString();
+        boolean onlyGeneric = true;
+        for (String p : parts) {
+            if (!"unknown error".equalsIgnoreCase(p) && !"unknown error.".equalsIgnoreCase(p)) {
+                onlyGeneric = false;
+                break;
+            }
+        }
+        if (onlyGeneric) {
+            joined = joined + " [" + e.getClass().getName() + "]";
+        }
+        return joined;
+    }
+
+    /**
+     * Some SDK versions only populate auxiliary fields instead of a useful {@link Throwable#getMessage()}.
+     */
+    private static String reflectSdkDiagnostics(Throwable root) {
+        Throwable cur = root;
+        while (cur != null) {
+            for (String methodName : new String[]{"getCode", "getErrorCode", "getReason", "getDetails"}) {
+                for (Class<?> c = cur.getClass(); c != null; c = c.getSuperclass()) {
+                    try {
+                        java.lang.reflect.Method m = c.getMethod(methodName);
+                        m.setAccessible(true);
+                        Object v = m.invoke(cur);
+                        if (v != null) {
+                            String s = v.toString().trim();
+                            if (!s.isEmpty()) {
+                                return methodName + "=" + s;
+                            }
+                        }
+                    } catch (Exception ignored) {
+                        // method not on this class
+                    }
+                }
+            }
+            cur = cur.getCause();
+        }
+        return null;
+    }
+
+    private static void rejectTruvideoSdk(PluginCall call, @NonNull TruvideoSdkException e) {
+        String msg = formatTruvideoMessage(e);
+        Log.e("TruvideoSdkVideoPlugin", "Truvideo SDK error: " + msg, e);
+        call.reject(msg, e);
     }
 
 }

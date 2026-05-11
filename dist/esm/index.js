@@ -107,6 +107,13 @@ export class BuilderRequest {
         return this.builderData;
     }
 }
+/** Muxed video outputs should use a real container extension (native SDKs often fail without it). */
+function ensureVideoResultPath(resultPath) {
+    if (/\.(mp4|mov|m4v|webm|mkv|3gp)$/i.test(resultPath)) {
+        return resultPath;
+    }
+    return `${resultPath}.mp4`;
+}
 export class MergeBuilder {
     constructor(filePaths, resultPath) {
         this.height = '';
@@ -119,7 +126,7 @@ export class MergeBuilder {
             throw new Error('resultPath is required for MediaBuilder.');
         }
         this._filePath = filePaths;
-        this.resultPath = resultPath;
+        this.resultPath = ensureVideoResultPath(resultPath);
     }
     setHeight(height) {
         this.height = '' + height;
@@ -195,7 +202,7 @@ export class ConcatBuilder {
             throw new Error('resultPath is required for ConcatBuilder.');
         }
         this._filePath = filePaths;
-        this.resultPath = resultPath;
+        this.resultPath = ensureVideoResultPath(resultPath);
     }
     async build() {
         const response = await TruvideoSdkVideo.concatVideos({
@@ -238,7 +245,7 @@ export class EncodeBuilder {
         if (!resultPath)
             throw new Error('resultPath is required for EncodeBuilder.');
         this.filePath = filePath;
-        this.resultPath = resultPath;
+        this.resultPath = ensureVideoResultPath(resultPath);
     }
     setHeight(height) {
         this.height = height.toString();
